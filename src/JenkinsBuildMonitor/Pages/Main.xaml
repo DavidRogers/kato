@@ -1,0 +1,68 @@
+﻿<Page x:Class="Kato.Pages.Main"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:cal="http://www.caliburnproject.org"
+	xmlns:kato="clr-namespace:Kato"
+	xmlns:src="clr-namespace:Kato.Resources">
+
+	<DockPanel>
+		<Grid DockPanel.Dock="Top" Margin="0,-20,0,10">
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top">
+				<TextBlock Cursor="Hand" cal:Message.Attach="[Event MouseDown] = [Action ToggleViewMode('list')]" Text="list">
+					<TextBlock.Style>
+						<Style TargetType="{x:Type TextBlock}">
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding ViewMode}">
+									<DataTrigger.Value>
+										<kato:ViewModeKind>List</kato:ViewModeKind>
+									</DataTrigger.Value>
+									<Setter Property="FontWeight" Value="Bold" />
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</TextBlock.Style>
+				</TextBlock>
+				<TextBlock Margin="5,0" Text="·" />
+				<TextBlock Cursor="Hand" cal:Message.Attach="[Event MouseDown] = [Action ToggleViewMode('grid')]" Text="grid">
+					<TextBlock.Style>
+						<Style TargetType="{x:Type TextBlock}">
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding ViewMode}">
+									<DataTrigger.Value>
+										<kato:ViewModeKind>Grid</kato:ViewModeKind>
+									</DataTrigger.Value>
+									<Setter Property="FontWeight" Value="Bold" />
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</TextBlock.Style>
+				</TextBlock>
+			</StackPanel>
+		</Grid>
+		<Label Visibility="{Binding IsUpdateAvailable, Converter={x:Static src:Converters.BoolToVisibilityConverter}}" Padding="4" Background="LightBlue" DockPanel.Dock="Bottom">An update has been installed, please restart to see the latest changes.</Label>
+		<Grid DockPanel.Dock="Bottom">
+			<ScrollViewer VerticalScrollBarVisibility="Auto">
+				<ContentControl x:Name="ServerItems" Content="{Binding}">
+					<ContentControl.Style>
+						<Style>
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding ViewMode}">
+									<DataTrigger.Value>
+										<kato:ViewModeKind>List</kato:ViewModeKind>
+									</DataTrigger.Value>
+									<Setter Property="ContentControl.ContentTemplate" Value="{StaticResource MainListViewItemTemplate}" />
+								</DataTrigger>
+								<DataTrigger Binding="{Binding ViewMode}">
+									<DataTrigger.Value>
+										<kato:ViewModeKind>Grid</kato:ViewModeKind>
+									</DataTrigger.Value>
+									<Setter Property="ContentControl.ContentTemplate" Value="{StaticResource MainGridViewItemTemplate}" />
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</ContentControl.Style>
+				</ContentControl>
+			</ScrollViewer>
+		</Grid>
+	</DockPanel>
+</Page>

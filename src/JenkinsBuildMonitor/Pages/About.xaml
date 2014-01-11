@@ -1,0 +1,16 @@
+﻿<Page x:Class="Kato.Pages.About"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:src="clr-namespace:Kato"
+		Title="About">
+	<DockPanel>
+		<TextBlock DockPanel.Dock="Bottom">
+			<Run Text="Version:" />
+			<Run Text="{x:Static src:App.AppVersion}" />
+		</TextBlock>
+		<StackPanel DockPanel.Dock="Top">
+			<TextBlock FontWeight="Bold">Credits:</TextBlock>
+			<TextBlock Margin="0,8,0,0">Icon and Jenkins logo --> http://jenkins-ci.org/</TextBlock>
+		</StackPanel>
+	</DockPanel>
+</Page>

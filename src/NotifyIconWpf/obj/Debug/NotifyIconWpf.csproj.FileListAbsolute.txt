@@ -1,0 +1,8 @@
+C:\Code\JenkinsBuildMonitor\src\NotifyIconWpf\bin\Debug\Hardcodet.Wpf.TaskbarNotification.dll
+C:\Code\JenkinsBuildMonitor\src\NotifyIconWpf\bin\Debug\Hardcodet.Wpf.TaskbarNotification.pdb
+C:\Code\JenkinsBuildMonitor\src\NotifyIconWpf\obj\Debug\NotifyIconWpf.csprojResolveAssemblyReference.cache
+C:\Code\JenkinsBuildMonitor\src\NotifyIconWpf\obj\Debug\Hardcodet.Wpf.TaskbarNotification.g.resources
+C:\Code\JenkinsBuildMonitor\src\NotifyIconWpf\obj\Debug\Hardcodet.Wpf.TaskbarNotification.Properties.Resources.resources
+C:\Code\JenkinsBuildMonitor\src\NotifyIconWpf\obj\Debug\NotifyIconWpf.csproj.GenerateResource.Cache
+C:\Code\JenkinsBuildMonitor\src\NotifyIconWpf\obj\Debug\Hardcodet.Wpf.TaskbarNotification.dll
+C:\Code\JenkinsBuildMonitor\src\NotifyIconWpf\obj\Debug\Hardcodet.Wpf.TaskbarNotification.pdb

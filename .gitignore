@@ -1,0 +1,32 @@
+# ignore output folders
+bin/
+build/
+build*/
+obj/
+ipch/
+Releases/
+
+# ignore output files
+a.out
+*.o
+*.d
+*.d.*
+
+# ignore user-specific options/cache files
+_ReSharper.*
+Thumbs.db
+*.csproj.user
+*.opensdf
+*.[Rr]e[Ss]harper.user
+*.sdf
+*.sln.cache
+*.suo
+*.vcxproj.user
+*.mode1v3
+!default.mode1v3
+*.pbxuser
+!default.pbxuser
+/Working/
+*.tmp
+SolutionInfo.cs
+*.DotSettings.user

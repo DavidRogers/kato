@@ -1,0 +1,91 @@
+﻿<mui:ModernWindow x:Class="Kato.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+		xmlns:taskbarNotification="http://www.hardcodet.net/taskbar"
+		xmlns:jenkinsApiClient="clr-namespace:JenkinsApiClient;assembly=JenkinsApiClient"
+		xmlns:kato="clr-namespace:Kato"
+		xmlns:resources="clr-namespace:Kato.Resources"
+		xmlns:cal="http://www.caliburnproject.org"
+		xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+		ContentSource="Pages/Main.xaml"
+		Icon="Images/jenkins.ico"
+		BackgroundContent="{StaticResource JenkinsBackground}"
+		ResizeMode="CanResizeWithGrip"
+		x:Name="This"
+		Title="Kato" Height="600" Width="900">
+		<mui:ModernWindow.TaskbarItemInfo>
+			<TaskbarItemInfo />
+		</mui:ModernWindow.TaskbarItemInfo>
+		<mui:ModernWindow.MenuLinkGroups>
+			<mui:LinkGroup DisplayName="Dashboard">
+				<mui:LinkGroup.Links>
+					<mui:Link DisplayName="" Source="Pages/Main.xaml" />
+				</mui:LinkGroup.Links>
+			</mui:LinkGroup>
+			<mui:LinkGroup DisplayName="Settings">
+			<mui:LinkGroup.Links>
+					<mui:Link DisplayName="" Source="Pages/Subscribe.xaml" />
+				</mui:LinkGroup.Links>
+			</mui:LinkGroup>
+		</mui:ModernWindow.MenuLinkGroups>
+		<mui:ModernWindow.TitleLinks>
+			<mui:LinkCollection>
+			<mui:Link DisplayName="about" Source="Pages/About.xaml" />
+			</mui:LinkCollection>
+		</mui:ModernWindow.TitleLinks>
+	<!--Id="{x:Static kato:MainWindow.AppGuid}"-->
+	<taskbarNotification:TaskbarIcon x:Name="MyNotifyIcon" 
+		Visibility="Visible"
+		ToolTipService.ShowDuration="60000"
+		ToolTipText="Build status"
+		IconSource="/Images/jenkins.ico">
+		<taskbarNotification:TaskbarIcon.ContextMenu>
+			<ContextMenu>
+				<MenuItem Header="Dashboard" cal:Message.Attach="OpenDashboard" />
+				<Separator />
+				<MenuItem Header="Exit" cal:Message.Attach="ExitApplication" />
+			</ContextMenu>
+		</taskbarNotification:TaskbarIcon.ContextMenu>
+		<taskbarNotification:TaskbarIcon.Resources>
+			<CollectionViewSource x:Key="JobsSource" Source="{Binding SubscribedJobs, Mode=OneWay}">
+				<CollectionViewSource.SortDescriptions>
+					<componentModel:SortDescription PropertyName="Status" />
+					<componentModel:SortDescription PropertyName="Name" />
+				</CollectionViewSource.SortDescriptions>
+
+			</CollectionViewSource>
+		</taskbarNotification:TaskbarIcon.Resources>
+		<taskbarNotification:TaskbarIcon.TrayToolTip>
+			<Border
+				  Background="White"
+				  BorderBrush="DimGray"
+				  BorderThickness="2"
+				  CornerRadius="4"
+				  Opacity="0.9"
+				  MaxHeight="800"
+				  Width="250">
+				<ItemsControl Margin="4" ItemsSource="{Binding Source={StaticResource JobsSource}}">
+					<ItemsControl.Style>
+						<Style>
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding ViewMode}">
+									<DataTrigger.Value>
+										<kato:ViewModeKind>List</kato:ViewModeKind>
+									</DataTrigger.Value>
+									<Setter Property="ItemsControl.ItemTemplate" Value="{StaticResource TrayPopupItemTemplate}" />
+								</DataTrigger>
+								<DataTrigger Binding="{Binding ViewMode}">
+									<DataTrigger.Value>
+										<kato:ViewModeKind>Grid</kato:ViewModeKind>
+									</DataTrigger.Value>
+									<Setter Property="ItemsControl.ItemTemplate" Value="{StaticResource TrayJobGridItemTemplate}" />
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</ItemsControl.Style>
+				</ItemsControl>
+			</Border>
+		</taskbarNotification:TaskbarIcon.TrayToolTip>
+	</taskbarNotification:TaskbarIcon>
+</mui:ModernWindow>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+	<id>Kato</id>
+	<title>Kato</title>
+	<version>$version$-beta</version>
+	<authors>fieryjoy</authors>
+	<requireLicenseAcceptance>false</requireLicenseAcceptance>
+	<description>Monitor the status of your Jenkins builds </description>
+	<tags>Jenkins build monitor</tags>
+  </metadata>
+	<files>
+		<file src="..\..\lib\CrashReportsClient.dll" target="lib\net45\" />
+		<file src="..\..\lib\FirstFloor.ModernUI.dll" target="lib\net45\" />
+		<file src="..\..\lib\Hardcodet.Wpf.TaskbarNotification.dll" target="lib\net45\" />
+		<file src="..\..\lib\JenkinsApiClient.dll" target="lib\net45\" />
+	</files>
+</package>
