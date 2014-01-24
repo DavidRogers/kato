@@ -85,6 +85,7 @@
 												Fill="{Binding Color, Converter={x:Static resources:Converters.StatusToColorConverter}}"
 												DockPanel.Dock="Left"
 												Width="5" Height="20"
+												Visibility="{Binding IsHidden, Converter={x:Static resources:Converters.ReverseBoolToVisibilityConverter}}"
 												ToolTip="{Binding Status, Converter={x:Static resources:Converters.StatusToHumanReadableConverter}}" />
 											<Grid HorizontalAlignment="Stretch"
 												DockPanel.Dock="Right"
