@@ -203,6 +203,16 @@
 
 				<TextBlock Margin="3,1"
 					Foreground="White"
+					VerticalAlignment="Top"
+					HorizontalAlignment="Left"
+					ToolTip="This job is in the queue waiting to be built."
+					Visibility="{Binding InQueue, Converter={x:Static resources:Converters.BoolToVisibilityConverter}}"
+					>
+					In queue
+				</TextBlock>
+
+				<TextBlock Margin="3,1"
+					Foreground="White"
 					VerticalAlignment="Bottom"
 					HorizontalAlignment="Right"
 					ToolTip="Last build time"

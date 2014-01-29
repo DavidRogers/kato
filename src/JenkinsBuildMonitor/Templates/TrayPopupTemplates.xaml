@@ -27,7 +27,7 @@
 			<Border.Effect>
 				<DropShadowEffect ShadowDepth="2" BlurRadius="5" Opacity=".5" Direction="290" />
 			</Border.Effect>
-			<Grid x:Name="MainGrid" Height="50">
+			<Grid x:Name="MainGrid" Height="54">
 				<ProgressBar Value="{Binding LastBuild.BuildPercentage, Mode=OneWay}" Minimum="0" Maximum="100"
 					Background="{Binding Color, Converter={x:Static resources:Converters.StatusToColorConverter}, ConverterParameter=true}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
 					Padding="10,4">
@@ -36,7 +36,7 @@
 					</ProgressBar.Foreground>
 				</ProgressBar>
 
-				<DockPanel Margin="4,4,4,0"
+				<DockPanel Margin="4,10,4,0"
 					VerticalAlignment="Top" HorizontalAlignment="Center" >
 					<Image Width="24" VerticalAlignment="Center"
 						DockPanel.Dock="Left"
@@ -82,6 +82,17 @@
 						ToolTip="{Binding Description, Mode=OneTime}"
 						TextTrimming="CharacterEllipsis"/>
 				</DockPanel>
+
+				<TextBlock Margin="3,1"
+					Foreground="White"
+					VerticalAlignment="Top"
+					FontSize="11"
+					HorizontalAlignment="Left"
+					ToolTip="This job is in the queue waiting to be built."
+					Visibility="{Binding InQueue, Converter={x:Static resources:Converters.BoolToVisibilityConverter}}"
+					>
+					In queue
+				</TextBlock>
 
 				<TextBlock	Margin="3,0,0,1"
 					Foreground="White"
