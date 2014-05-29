@@ -48,6 +48,23 @@ namespace Kato
 			Initialize();
 		}
 
+		public void SaveSettings()
+		{
+			UserSettings settings = new UserSettings { Servers = new List<SavedJenkinsServers>() };
+			foreach (ServerViewModel server in Servers)
+			{
+				List<SavedJob> jobs = server.Jobs.Where(x => x.IsSubscribed).Select(x => new SavedJob { Name = x.Name }).ToList();
+				settings.Servers.Add(new SavedJenkinsServers { DomainUrl = server.DomainUrl, Jobs = jobs });
+			}
+
+			PersistedUserSettings.Save(settings);
+			Settings.Default.ViewMode = ViewMode.ToString();
+			Settings.Default.Servers = new StringCollection();
+			Settings.Default.Servers.AddRange(Servers.Select(x => x.DomainUrl).ToArray());
+			Settings.Default.Save();
+
+		}
+
 		public ObservableCollection<ServerViewModel> Servers { get { return m_servers; } }
 
 		public ObservableCollection<JobViewModel> SubscribedJobs
@@ -183,6 +200,7 @@ namespace Kato
 
 		public void ExitApplication()
 		{
+			SaveSettings();
 			AllowExit = true;
 			Application.Current.Shutdown();
 		}
@@ -250,11 +268,7 @@ namespace Kato
 			AutoDetectServers();
 
 			Update();
-
-			if (Settings.Default.Servers == null)
-				Settings.Default.Servers = new StringCollection();
-			Settings.Default.Servers.AddRange(Servers.Select(x => x.DomainUrl).Where(x => !Settings.Default.Servers.Contains(x)).ToArray());
-			Settings.Default.Save();
+			SaveSettings();
 		}
 
 		private void AutoDetectServers()

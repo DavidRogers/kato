@@ -73,22 +73,7 @@ namespace Kato
 
 		protected override void OnClosing(CancelEventArgs e)
 		{
-			if (Model.AllowExit)
-			{
-				UserSettings settings = new UserSettings { Servers = new List<SavedJenkinsServers>() };
-				foreach (ServerViewModel server in Model.Servers)
-				{
-					List<SavedJob> jobs = server.Jobs.Where(x => x.IsSubscribed).Select(x => new SavedJob { Name = x.Name }).ToList();
-					settings.Servers.Add(new SavedJenkinsServers { DomainUrl = server.DomainUrl, Jobs = jobs });
-				}
-
-				PersistedUserSettings.Save(settings);
-				Settings.Default.ViewMode = Model.ViewMode.ToString();
-				Settings.Default.Servers = new StringCollection();
-				Settings.Default.Servers.AddRange(Model.Servers.Select(x => x.DomainUrl).ToArray());
-				Settings.Default.Save();
-			}
-			else
+			if (!Model.AllowExit)
 			{
 				e.Cancel = true;
 				WindowState = WindowState.Minimized;

@@ -1,13 +1,15 @@
 ﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using FirstFloor.ModernUI.Windows;
+using FirstFloor.ModernUI.Windows.Navigation;
 
 namespace Kato.Pages
 {
 	/// <summary>
 	/// Interaction logic for Subscribe.xaml
 	/// </summary>
-	public partial class Subscribe : Page
+	public partial class Subscribe : IContent
 	{
 		public Subscribe()
 		{
@@ -32,6 +34,29 @@ namespace Kato.Pages
 		private void AddServerButton_Click(object sender, RoutedEventArgs e)
 		{
 			AddServerBox.Focus();
+		}
+
+		public void OnFragmentNavigation(FragmentNavigationEventArgs e)
+		{
+		}
+
+		public void OnNavigatedFrom(NavigationEventArgs e)
+		{
+			try
+			{
+				((MainWindow) Application.Current.MainWindow).Model.SaveSettings();
+			}
+			catch
+			{
+			}
+		}
+
+		public void OnNavigatedTo(NavigationEventArgs e)
+		{
+		}
+
+		public void OnNavigatingFrom(NavigatingCancelEventArgs e)
+		{
 		}
 	}
 }
