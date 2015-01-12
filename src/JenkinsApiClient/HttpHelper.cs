@@ -11,7 +11,7 @@ namespace JenkinsApiClient
 	{
 		public static Task<string> GetJsonAsync(Uri path)
 		{
-			using (HttpClient client = new HttpClient { BaseAddress = new Uri(path.Scheme + "://" + path.Host) })
+			using (HttpClient client = new HttpClient { BaseAddress = new Uri(path.Scheme + "://" + path.Host + ":" + path.Port) })
 			{
 				HttpResponseMessage result = client.GetAsync(path.PathAndQuery).Result;
 				result.EnsureSuccessStatusCode();
@@ -21,7 +21,7 @@ namespace JenkinsApiClient
 
 		public static string GetJson(Uri path)
 		{
-			using (HttpClient client = new HttpClient { BaseAddress = new Uri(path.Scheme + "://" + path.Host) })
+			using (HttpClient client = new HttpClient { BaseAddress = new Uri(path.Scheme + "://" + path.Host + ":" + path.Port) })
 			{
 				HttpResponseMessage result = client.GetAsync(path.PathAndQuery).Result;
 				result.EnsureSuccessStatusCode();
@@ -31,7 +31,7 @@ namespace JenkinsApiClient
 
 		public static ConsoleOutput GetConsoleOutput(Uri path, long offset)
 		{
-			using (HttpClient client = new HttpClient { BaseAddress = new Uri(path.Scheme + "://" + path.Host) })
+			using (HttpClient client = new HttpClient { BaseAddress = new Uri(path.Scheme + "://" + path.Host + ":" + path.Port) })
 			{
 				HttpResponseMessage result = client.GetAsync(path.PathAndQuery + "logText/progressiveText?start=" + offset).Result;
 				result.EnsureSuccessStatusCode();
@@ -47,7 +47,7 @@ namespace JenkinsApiClient
 
 		public static Task<string> PostData(Uri path, string data = "")
 		{
-			using (HttpClient client = new HttpClient { BaseAddress = new Uri(path.Scheme + "://" + path.Host) })
+			using (HttpClient client = new HttpClient { BaseAddress = new Uri(path.Scheme + "://" + path.Host + ":" + path.Port) })
 			{
 				HttpResponseMessage result = client.PostAsync(path.PathAndQuery, new StringContent(data)).Result;
 				result.EnsureSuccessStatusCode();
