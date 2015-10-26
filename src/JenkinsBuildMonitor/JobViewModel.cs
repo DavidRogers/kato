@@ -205,7 +205,7 @@ namespace Kato
 			MouseButtonEventArgs args = (MouseButtonEventArgs) context.EventArgs;
 			if (args.ClickCount > 1)
 			{
-				Uri path = (LastBuild != null && Status < BuildStatus.Success) ? LastBuild.Path : Path;
+				Uri path = (LastBuild != null && Status < BuildStatus.Success) ? (LastBuild.Path ?? Path) : Path;
 				Process.Start(path.OriginalString);
 			}
 		}
