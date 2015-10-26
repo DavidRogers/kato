@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using FirstFloor.ModernUI.Presentation;
 using Hardcodet.Wpf.TaskbarNotification;
-using Kato.Properties;
 
 namespace Kato
 {
@@ -78,6 +75,8 @@ namespace Kato
 				e.Cancel = true;
 				WindowState = WindowState.Minimized;
 			}
+
+			Model.SaveSettings();
 			base.OnClosing(e);
 		}
 
