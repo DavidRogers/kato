@@ -26,14 +26,18 @@ namespace Kato.Pages
 			}
 			else
 			{
-				AddServerBorder.Width = 200;
-				AddServerBox.Focus();
+			    ServerDefinitionGrid.Width = 320;
+                ServerDefinitionGrid.Focus();
+
+                AddServerBorder.Width = 200;
+                AddServerBox.Focus();
 			}
 		}
 
 		private void AddServerButton_Click(object sender, RoutedEventArgs e)
 		{
-			AddServerBox.Focus();
+            ServerDefinitionGrid.Focus();
+            AddServerBox.Focus();
 		}
 
 		public void OnFragmentNavigation(FragmentNavigationEventArgs e)
@@ -58,5 +62,6 @@ namespace Kato.Pages
 		public void OnNavigatingFrom(NavigatingCancelEventArgs e)
 		{
 		}
+
 	}
 }
