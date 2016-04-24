@@ -32,7 +32,8 @@ namespace Kato
 
 		public ObservableCollection<JobViewModel> Jobs { get { return m_jobs; } }
 		public string DomainUrl { get { return m_client.BaseUri.OriginalString; } }
-		public string Description { get; private set; }
+        public bool RequiresAuthentication { get { return m_server.RequiresAuthentication; } }
+        public string Description { get; private set; }
 
 		public bool IsValid
 		{
