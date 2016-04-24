@@ -7,11 +7,11 @@ using System.Windows.Input;
 
 namespace FirstFloor.ModernUI.Windows
 {
-    /// <summary>
-    /// Represents a collection of commands keyed by a uri.
-    /// </summary>
-    public class CommandDictionary
-        : Dictionary<Uri, ICommand>
-    {
-    }
+	/// <summary>
+	/// Represents a collection of commands keyed by a uri.
+	/// </summary>
+	public class CommandDictionary
+		: Dictionary<Uri, ICommand>
+	{
+	}
 }

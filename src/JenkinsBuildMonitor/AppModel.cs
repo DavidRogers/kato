@@ -17,9 +17,11 @@ using System.Windows.Shell;
 using System.Windows.Threading;
 using System.Xml.Linq;
 using Caliburn.Micro;
+using CredentialManagement;
 using Hardcodet.Wpf.TaskbarNotification;
 using JenkinsApiClient;
 using Kato.Properties;
+using SecureCredentialsLibrary;
 
 namespace Kato
 {
@@ -34,7 +36,7 @@ namespace Kato
 			m_taskbarItemInfo = taskbarItemInfo;
 			m_servers = new ObservableCollection<ServerViewModel>();
 			m_settings = PersistedUserSettings.Open<UserSettings>() ?? new UserSettings { Servers = new List<SavedJenkinsServers>() };
-			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(c_projectUpdateInterval), DispatcherPriority.Background, (sender, args) => Update(), Dispatcher.CurrentDispatcher);
+			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(m_projectUpdateInterval), DispatcherPriority.Background, (sender, args) => Update(), Dispatcher.CurrentDispatcher);
 			Status = new StatusViewModel();
 			m_subscribedJobs = new ObservableCollection<JobViewModel>();
 
@@ -54,7 +56,7 @@ namespace Kato
 			foreach (ServerViewModel server in Servers)
 			{
 				List<SavedJob> jobs = server.Jobs.Where(x => x.IsSubscribed).Select(x => new SavedJob { Name = x.Name }).ToList();
-				settings.Servers.Add(new SavedJenkinsServers { DomainUrl = server.DomainUrl, Jobs = jobs });
+				settings.Servers.Add(new SavedJenkinsServers { DomainUrl = server.DomainUrl, Jobs = jobs, RequiresAuthentication = server.RequiresAuthentication });
 			}
 
 			PersistedUserSettings.Save(settings);
@@ -94,6 +96,42 @@ namespace Kato
 				NotifyOfPropertyChange(() => NewServerUrl);
 			}
 		}
+
+		public bool NewServerAuthRequired
+		{
+			get { return m_newServerAuthRequired; }
+			set
+			{
+				if (value == m_newServerAuthRequired) return;
+
+				m_newServerAuthRequired = value;
+				NotifyOfPropertyChange(() => NewServerAuthRequired);
+			}
+		}
+
+		//TODO: Make interval configurable
+		public int ProjectUpdateInterval
+		{
+			get { return m_projectUpdateInterval; }
+			set
+			{
+				if (value == m_projectUpdateInterval) return;
+
+				m_projectUpdateInterval = value;
+				RestartTimer();
+				NotifyOfPropertyChange(() => ProjectUpdateInterval);
+			}
+		}
+
+		private void RestartTimer()
+		{
+			bool shouldStart = m_timer.IsEnabled;
+			m_timer.Stop();
+			m_timer.Interval = TimeSpan.FromSeconds(m_projectUpdateInterval);
+			if(shouldStart)
+				m_timer.Start();
+		}
+
 
 		public ViewModeKind ViewMode
 		{
@@ -153,14 +191,14 @@ namespace Kato
 
 		public void ClearFilter(ActionExecutionContext context)
 		{
-			var eventArgs = (KeyEventArgs) context.EventArgs;
+			var eventArgs = (KeyEventArgs)context.EventArgs;
 			if (eventArgs.Key == Key.Escape)
 				SubscribeFilter = "";
 		}
 
 		public void AddServerEnter(ActionExecutionContext context)
 		{
-			var eventArgs = (KeyEventArgs) context.EventArgs;
+			var eventArgs = (KeyEventArgs)context.EventArgs;
 			if (eventArgs.Key == Key.Enter)
 				AddServer();
 		}
@@ -183,17 +221,62 @@ namespace Kato
 				return;
 			}
 
-			if (AddServer(NewServerUrl))
+			if (AddServer(NewServerUrl, NewServerAuthRequired))
 			{
 				IsAddServerUrlValid = true;
 				NewServerUrl = "";
+				NewServerAuthRequired = false;
 			}
+		}
+
+
+		public void ToggleSelection()
+		{
+			SetJobSubscriptions("t");
+		}
+		public void ClearSelection()
+		{
+			SetJobSubscriptions("c");
+		}
+		public void SelectAll()
+		{
+			SetJobSubscriptions("a");
+		}
+
+
+		private void SetJobSubscriptions(string mode)
+		{
+			if (m_servers == null)
+				return;
+
+			var jobs = m_servers.Where(s => s.Jobs != null).SelectMany(s => s.Jobs);
+
+			foreach (var j in jobs)
+			{
+				switch (mode)
+				{
+					case "c":
+						j.IsSubscribed = false;
+						break;
+					case "t":
+						j.IsSubscribed = !j.IsSubscribed;
+						break;
+					case "a":
+						j.IsSubscribed = true;
+						break;
+					default:
+						break;
+				}
+
+			}
+
+			SaveSettings();
 		}
 
 		public void OpenDashboard()
 		{
 			if (Application.Current.MainWindow != null)
-				((MainWindow) Application.Current.MainWindow).OpenDashboard();
+				((MainWindow)Application.Current.MainWindow).OpenDashboard();
 		}
 
 		public bool AllowExit { get; set; }
@@ -238,21 +321,21 @@ namespace Kato
 			string name;
 			switch (status)
 			{
-			case BuildStatus.Success:
-				name = "green";
-				break;
-			case BuildStatus.SuccessAndBuilding:
-				name = "yellow";
-				break;
-			case BuildStatus.Failed:
-				name = "red";
-				break;
-			case BuildStatus.FailedAndBuilding:
-				name = "orange";
-				break;
-			default:
-				name = "gray";
-				break;
+				case BuildStatus.Success:
+					name = "green";
+					break;
+				case BuildStatus.SuccessAndBuilding:
+					name = "yellow";
+					break;
+				case BuildStatus.Failed:
+					name = "red";
+					break;
+				case BuildStatus.FailedAndBuilding:
+					name = "orange";
+					break;
+				default:
+					name = "gray";
+					break;
 			}
 
 			return name;
@@ -260,13 +343,22 @@ namespace Kato
 
 		private void Initialize()
 		{
-			if (Settings.Default.Servers != null && Settings.Default.Servers.Count > 0)
-				AddServers(Settings.Default.Servers);
+			if (m_settings == null || m_settings.Servers == null || m_settings.Servers.Count == 0)
+			{
+				if (Settings.Default.Servers != null && Settings.Default.Servers.Count > 0)
+					AddServers(Settings.Default.Servers);
+				else
+					AddServers(new[] { "http://jenkins" });
+
+				AutoDetectServers();
+			}
 			else
-				AddServers(new[] { "http://jenkins" });
-
-			AutoDetectServers();
-
+			{
+				foreach (var server in m_settings.Servers)
+				{
+					AddServer(server.DomainUrl, server.RequiresAuthentication);
+				}
+			}
 			Update();
 			SaveSettings();
 		}
@@ -291,7 +383,7 @@ namespace Kato
 						string data = Encoding.UTF8.GetString(temp.Buffer);
 						var xml = XElement.Parse(data);
 						var urlElement = xml.Elements("url").FirstOrDefault();
-						AddServers(new[] { (string) urlElement });
+						AddServers(new[] { (string)urlElement });
 					}
 				}, TaskScheduler.FromCurrentSynchronizationContext());
 
@@ -308,16 +400,28 @@ namespace Kato
 				AddServer(serverUri);
 		}
 
-		private bool AddServer(string serverUri)
+		private bool AddServer(string serverUri, bool authRequired = false)
 		{
 			if (m_servers.Any(x => x.DomainUrl == serverUri))
 				return false;
 
+			UserCredentials userCreds = null;
+			if (authRequired)
+			{
+				userCreds = PromptForCredentials(serverUri);
+				if (userCreds == null)
+				{
+					MessageBox.Show("Please make sure that your username and password is correct!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+					return false;
+				}
+			}
+
 			ServerViewModel serverViewModel;
 			try
 			{
-				JenkinsClient client = new JenkinsClient(new Uri(serverUri, UriKind.Absolute));
+				JenkinsClient client = new JenkinsClient(new Uri(serverUri, UriKind.Absolute), userCreds);
 				Server server = client.GetJson<Server>(new Uri(serverUri));
+				server.RequiresAuthentication = authRequired;
 
 				serverViewModel = new ServerViewModel(client, server);
 			}
@@ -342,7 +446,7 @@ namespace Kato
 
 		private void JobOnStatusChanged(object sender, StatusChangedArgs args)
 		{
-			JobViewModel job = (JobViewModel) sender;
+			JobViewModel job = (JobViewModel)sender;
 
 			if (args.NewValue == BuildStatus.Failed)
 				m_notifyIcon.ShowBalloonTip(job.Name, "Build " + args.NewValue, BalloonIcon.Error);
@@ -407,7 +511,7 @@ namespace Kato
 
 		private DataTemplate GetOverlayIcon(BuildStatus newValue)
 		{
-			var icon = ((DataTemplate) Application.Current.Resources[newValue + "OverlayIcon"]);
+			var icon = ((DataTemplate)Application.Current.Resources[newValue + "OverlayIcon"]);
 			return icon;
 		}
 
@@ -416,7 +520,49 @@ namespace Kato
 			m_updateManager.CheckForUpdate();
 		}
 
-		private const int c_projectUpdateInterval = 10;
+		private UserCredentials PromptForCredentials(string url)
+		{
+			UserCredentials result = null;
+			CredentialsDialog dialog = new CredentialsDialog("Kato - Jenkins Authentication : \r\n" + url);
+
+			if (dialog.Show() == DialogResult.OK && (!String.IsNullOrWhiteSpace(dialog.Password) && !String.IsNullOrWhiteSpace(dialog.Name)))
+			{
+				var creds = new UserCredentials { UserName = dialog.Name, Password = dialog.Password };
+
+				if (!TryToAuthenticate(url, creds))
+					return null;
+
+				if (dialog.SaveChecked)
+				{
+					dialog.Confirm(true);
+				}
+				result = creds;
+			}
+
+			return result;
+		}
+
+		private bool TryToAuthenticate(string serverUrl, UserCredentials creds)
+		{
+			if (!creds.IsValid)
+				return false;
+
+
+			try
+			{
+				var apiUri = JenkinsApiHelper.GetApiRoute(new Uri(serverUrl, UriKind.Absolute));
+				var response = HttpHelper.GetJson(apiUri, creds);
+				return true;
+			}
+			catch (Exception e)
+			{
+				s_logger.Error(e.Message, e);
+				return false;
+			}
+
+		}
+
+		private int m_projectUpdateInterval = 60; // Default polling interval is 60 seconds
 		DispatcherTimer m_updateTimer;
 		static readonly log4net.ILog s_logger = log4net.LogManager.GetLogger("AppModel");
 		readonly ObservableCollection<ServerViewModel> m_servers;
@@ -428,6 +574,7 @@ namespace Kato
 		string m_subscribeFilter;
 		BuildStatus m_overallStatus;
 		string m_newServerUrl;
+		bool m_newServerAuthRequired;
 		private bool m_isAddServerUrlValid;
 		private ViewModeKind m_viewMode;
 		private bool m_isUpdateAvailable;

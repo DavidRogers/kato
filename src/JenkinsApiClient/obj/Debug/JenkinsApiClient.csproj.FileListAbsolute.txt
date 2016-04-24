@@ -38,5 +38,3 @@ C:\personalgit\kato\src\JenkinsApiClient\bin\Debug\System.Runtime.xml
 C:\personalgit\kato\src\JenkinsApiClient\bin\Debug\System.Threading.Tasks.xml
 C:\personalgit\kato\src\JenkinsApiClient\obj\Debug\JenkinsApiClient.dll
 C:\personalgit\kato\src\JenkinsApiClient\obj\Debug\JenkinsApiClient.pdb
-C:\personalgit\kato\src\JenkinsApiClient\obj\Debug\JenkinsApiClient.csproj.App.config
-C:\personalgit\kato\src\JenkinsApiClient\obj\Debug\JenkinsApiClient.csprojResolveAssemblyReference.cache
