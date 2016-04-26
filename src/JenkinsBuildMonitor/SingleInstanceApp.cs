@@ -1,10 +1,10 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="SingleInstance.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
+//	 Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 // <summary>
-//     This class checks to make sure that only one instance of 
-//     this application is running at a time.
+//	 This class checks to make sure that only one instance of 
+//	 this application is running at a time.
 // </summary>
 //-----------------------------------------------------------------------
 
@@ -332,7 +332,7 @@ namespace Kato
 				// Clickonce deployed apps cannot recieve traditional commandline arguments
 				// As a workaround commandline arguments can be written to a shared location before 
 				// the app is launched and the app can obtain its commandline arguments from the 
-				// shared location               
+				// shared location			   
 				string appFolderPath = Path.Combine(
 					Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), uniqueApplicationName);
 

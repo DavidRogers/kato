@@ -72,9 +72,9 @@ namespace FirstFloor.ModernUI.Windows.Controls
 		private Stack<Uri> history = new Stack<Uri>();
 		private Dictionary<Uri, object> contentCache = new Dictionary<Uri, object>();
 #if NET4
-        private List<WeakReference> childFrames = new List<WeakReference>();        // list of registered frames in sub tree
+		private List<WeakReference> childFrames = new List<WeakReference>();		// list of registered frames in sub tree
 #else
-		private List<WeakReference<ModernFrame>> childFrames = new List<WeakReference<ModernFrame>>();        // list of registered frames in sub tree
+		private List<WeakReference<ModernFrame>> childFrames = new List<WeakReference<ModernFrame>>();		// list of registered frames in sub tree
 #endif
 		private CancellationTokenSource tokenSource;
 		private bool isNavigatingHistory;
@@ -337,8 +337,8 @@ namespace FirstFloor.ModernUI.Windows.Controls
 				ModernFrame frame;
 
 #if NET4
-                if (r.IsAlive) {
-                    frame = (ModernFrame)r.Target;
+				if (r.IsAlive) {
+					frame = (ModernFrame)r.Target;
 #else
 				if (r.TryGetTarget(out frame))
 				{
@@ -478,7 +478,7 @@ namespace FirstFloor.ModernUI.Windows.Controls
 			if (this.history.Count > 0)
 			{
 				var oldValue = this.Source;
-				var newValue = this.history.Peek();     // do not remove just yet, navigation may be cancelled
+				var newValue = this.history.Peek();	 // do not remove just yet, navigation may be cancelled
 
 				if (CanNavigate(oldValue, newValue, NavigationType.Back))
 				{
@@ -538,7 +538,7 @@ namespace FirstFloor.ModernUI.Windows.Controls
 			if (!GetChildFrames().Contains(frame))
 			{
 #if NET4
-                var r = new WeakReference(frame);
+				var r = new WeakReference(frame);
 #else
 				var r = new WeakReference<ModernFrame>(frame);
 #endif

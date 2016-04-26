@@ -13,61 +13,107 @@
 			<TextBlock FontWeight="Bold" VerticalAlignment="Center">Click on one or more Jobs to subscribe to it</TextBlock>
 			<StackPanel Orientation="Horizontal" 
 			HorizontalAlignment="Right"
-			Margin="0,0,0,4"
-			>
-			<Border  x:Name="AddServerBorder"
-				Width="0"
-				BorderBrush="{Binding IsAddServerUrlValid, Converter={x:Static resources:Converters.IsValidToBrush}}" 
-				BorderThickness="1">
-				<TextBox x:Name="AddServerBox"
-					Padding="4 2"
-					cal:Message.Attach="[Event KeyUp]=[Action AddServerEnter($executionContext)]"
-					Text="{Binding NewServerUrl, UpdateSourceTrigger=PropertyChanged}">
-					<resources:WatermarkService.Watermark>
-						<TextBlock Margin="5,3,0,0">http://jenkins.yourdomain.com</TextBlock>
-					</resources:WatermarkService.Watermark>
-				</TextBox>
-			</Border>
-			<Button Margin="4,0,0,0" Padding="4 2" x:Name="AddServerButton"
+			Margin="0,0,0,4">
+
+				<Grid Name="ServerDefinitionGrid" Width="0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+					</Grid.ColumnDefinitions>
+					<Border  x:Name="AddServerBorder"
+							 Width="0"
+							 Grid.Column="0"
+							 BorderBrush="{Binding IsAddServerUrlValid, Converter={x:Static resources:Converters.IsValidToBrush}}" 
+							 BorderThickness="1">
+						<TextBox x:Name="AddServerBox" 
+											 Padding="4 2"
+											 cal:Message.Attach="[Event KeyUp]=[Action AddServerEnter($executionContext)]"
+											 Text="{Binding NewServerUrl, UpdateSourceTrigger=PropertyChanged}">
+							<resources:WatermarkService.Watermark>
+								<TextBlock Margin="5,3,0,0">http://jenkins.yourdomain.com</TextBlock>
+							</resources:WatermarkService.Watermark>
+						</TextBox>
+					</Border>
+
+					<Label TextBlock.TextAlignment="Center" Padding="4 4" Grid.Column="1">Auth required</Label>
+					<CheckBox x:Name="AuthRequiredCheck" IsChecked="{Binding NewServerAuthRequired, UpdateSourceTrigger=PropertyChanged}" Grid.Column="2"></CheckBox>
+				</Grid>
+
+				<Button Margin="4,0,0,0" Padding="4 2" x:Name="AddServerButton"
 				cal:Message.Attach="AddServer"
 				ToolTip="Click here to add a new Jenkins server"
 				Click="AddServerButton_Click">add server</Button>
-			<StackPanel.Triggers>
-				<EventTrigger RoutedEvent="Button.Click" SourceName="AddServerButton">
-					<EventTrigger.Actions>
-					<BeginStoryboard>
-							<Storyboard TargetName="AddServerBorder">
-							<DoubleAnimation To="200" Storyboard.TargetProperty="Width" />
-						</Storyboard>
-					</BeginStoryboard>
-					</EventTrigger.Actions>
-				</EventTrigger>
-				<EventTrigger RoutedEvent="TextBox.LostFocus" SourceName="AddServerBorder">
-					<EventTrigger.Actions>
-						<BeginStoryboard>
-							<Storyboard TargetName="AddServerBorder">
-								<DoubleAnimation BeginTime="0:0:1" To="0" Storyboard.TargetProperty="Width" />
-							</Storyboard>
-						</BeginStoryboard>
-					</EventTrigger.Actions>
-				</EventTrigger>
-			</StackPanel.Triggers>
-		</StackPanel>
+				<StackPanel.Triggers>
+					<EventTrigger RoutedEvent="Button.Click" SourceName="AddServerButton">
+						<EventTrigger.Actions>
+							<BeginStoryboard>
+								<Storyboard TargetName="ServerDefinitionGrid">
+									<DoubleAnimation To="320" Storyboard.TargetProperty="Width" />
+								</Storyboard>
+							</BeginStoryboard>
+							<BeginStoryboard>
+								<Storyboard TargetName="AddServerBorder">
+									<DoubleAnimation To="200" Storyboard.TargetProperty="Width" />
+								</Storyboard>
+							</BeginStoryboard>
+						</EventTrigger.Actions>
+					</EventTrigger>
+					<EventTrigger RoutedEvent="TextBox.LostFocus" SourceName="ServerDefinitionGrid">
+						<EventTrigger.Actions>
+							<BeginStoryboard>
+								<Storyboard TargetName="ServerDefinitionGrid">
+									<DoubleAnimation BeginTime="0:0:1" To="0" Storyboard.TargetProperty="Width"/>
+								</Storyboard>
+							</BeginStoryboard>
+							<BeginStoryboard>
+								<Storyboard TargetName="AddServerBorder">
+									<DoubleAnimation BeginTime="0:0:1" To="0" Storyboard.TargetProperty="Width"/>
+								</Storyboard>
+							</BeginStoryboard>
+						</EventTrigger.Actions>
+					</EventTrigger>
+				</StackPanel.Triggers>
+			</StackPanel>
 		</Grid>
-		<TextBox DockPanel.Dock="Top" x:Name="FilterBox" Padding="3" FontSize="12"
-			Margin="0,0,0,4"
-			Text="{Binding SubscribeFilter, UpdateSourceTrigger=PropertyChanged}"
-			cal:Message.Attach="[Event KeyUp]=[Action ClearFilter($executionContext)]">
-			<resources:WatermarkService.Watermark>
-				<TextBlock Margin="5,3,0,0">type here to filter jobs</TextBlock>
-			</resources:WatermarkService.Watermark>
-		</TextBox>
+		<Grid DockPanel.Dock="Top">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="80"></ColumnDefinition>
+				<ColumnDefinition Width="80"></ColumnDefinition>
+				<ColumnDefinition Width="80"></ColumnDefinition>
+				<ColumnDefinition Width="*"></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+
+			<Button Margin="4,0,0,4" Padding="4 2" x:Name="AllSelectionButton" Grid.Column="0"
+				cal:Message.Attach="SelectAll"
+				ToolTip="Click here to toggle project selection">Select All</Button>
+
+			<Button Margin="4,0,0,4" Padding="4 2" x:Name="ClearSelectionButton" Grid.Column="1"
+				cal:Message.Attach="ClearSelection"
+				ToolTip="Click here to toggle project selection">Clear</Button>
+
+			<Button Margin="4,0,0,4" Padding="4 2" Grid.Column="2"
+					cal:Message.Attach="ToggleSelection"
+					ToolTip="Click here to toggle project selection">Toggle</Button>
+
+
+			<TextBox DockPanel.Dock="Top" x:Name="FilterBox" Padding="3" FontSize="12" Grid.Column="3"
+					 Margin="4,0,0,4"
+					 Text="{Binding SubscribeFilter, UpdateSourceTrigger=PropertyChanged}"
+					 cal:Message.Attach="[Event KeyUp]=[Action ClearFilter($executionContext)]">
+				<resources:WatermarkService.Watermark>
+					<TextBlock Margin="5,3,0,0">type here to filter jobs</TextBlock>
+				</resources:WatermarkService.Watermark>
+			</TextBox>
+		</Grid>
+
+
 		<ScrollViewer DockPanel.Dock="Bottom" VerticalScrollBarVisibility="Auto">
 			<ItemsControl ItemsSource="{Binding Servers, Mode=OneTime}">
 				<ItemsControl.ItemsPanel>
-				<ItemsPanelTemplate>
-					<VirtualizingStackPanel />
-				</ItemsPanelTemplate>
+					<ItemsPanelTemplate>
+						<VirtualizingStackPanel />
+					</ItemsPanelTemplate>
 				</ItemsControl.ItemsPanel>
 				<ItemsControl.ItemTemplate>
 					<DataTemplate DataType="{x:Type src:ServerViewModel}">
@@ -93,7 +139,7 @@
 												ToolTip="{Binding Name, Mode=OneTime}"
 												Visibility="{Binding IsHidden, Converter={x:Static resources:Converters.ReverseBoolToVisibilityConverter}}">
 
-													<mui:ModernButton Visibility="{Binding IsSubscribed, Converter={x:Static resources:Converters.ReverseBoolToVisibilityConverter}}"
+												<mui:ModernButton Visibility="{Binding IsSubscribed, Converter={x:Static resources:Converters.ReverseBoolToVisibilityConverter}}"
 													cal:Message.Attach="Subscribe"
 													Content="{Binding Name, Mode=OneTime}"
 													HorizontalAlignment="Left">
@@ -117,3 +163,4 @@
 		</ScrollViewer>
 	</DockPanel>
 </Page>
+
