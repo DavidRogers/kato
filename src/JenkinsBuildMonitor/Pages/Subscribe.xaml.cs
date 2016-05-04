@@ -19,13 +19,16 @@ namespace Kato.Pages
 
 		private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
 		{
-			AppModel model = (AppModel) ((Page) sender).DataContext;
+			AppModel model = (AppModel)((Page)sender).DataContext;
 			if (model.Servers != null && model.Servers.Any())
 			{
 				FilterBox.Focus();
 			}
 			else
 			{
+				ServerDefinitionGrid.Width = 320;
+				ServerDefinitionGrid.Focus();
+
 				AddServerBorder.Width = 200;
 				AddServerBox.Focus();
 			}
@@ -33,6 +36,7 @@ namespace Kato.Pages
 
 		private void AddServerButton_Click(object sender, RoutedEventArgs e)
 		{
+			ServerDefinitionGrid.Focus();
 			AddServerBox.Focus();
 		}
 
@@ -44,7 +48,7 @@ namespace Kato.Pages
 		{
 			try
 			{
-				((MainWindow) Application.Current.MainWindow).Model.SaveSettings();
+				((MainWindow)Application.Current.MainWindow).Model.SaveSettings();
 			}
 			catch
 			{
@@ -58,5 +62,6 @@ namespace Kato.Pages
 		public void OnNavigatingFrom(NavigatingCancelEventArgs e)
 		{
 		}
+
 	}
 }

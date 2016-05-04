@@ -50,9 +50,14 @@
             The base implementation of a command.
             </summary>
         </member>
+        <member name="E:FirstFloor.ModernUI.Presentation.CommandBase.CanExecuteChanged">
+            <summary>
+            Occurs when changes occur that affect whether or not the command should execute.
+            </summary>
+        </member>
         <member name="M:FirstFloor.ModernUI.Presentation.CommandBase.OnCanExecuteChanged">
             <summary>
-            Raises the <see cref="E:FirstFloor.ModernUI.Presentation.CommandBase.CanExecuteChanged"/> event.
+            Raises the <see cref="E:FirstFloor.ModernUI.Presentation.CommandBase.CanExecuteChanged" /> event.
             </summary>
         </member>
         <member name="M:FirstFloor.ModernUI.Presentation.CommandBase.CanExecute(System.Object)">
@@ -76,11 +81,6 @@
             </summary>
             <param name="parameter">The parameter.</param>
         </member>
-        <member name="E:FirstFloor.ModernUI.Presentation.CommandBase.CanExecuteChanged">
-            <summary>
-            Occurs when changes occur that affect whether or not the command should execute.
-            </summary>
-        </member>
         <member name="T:FirstFloor.ModernUI.Presentation.LinkGroupCollection">
             <summary>
             Represents an observable collection of link groups.
@@ -89,22 +89,6 @@
         <member name="T:FirstFloor.ModernUI.Presentation.Displayable">
             <summary>
             Provides a base implementation for objects that are displayed in the UI.
-            </summary>
-        </member>
-        <member name="T:FirstFloor.ModernUI.Presentation.NotifyPropertyChanged">
-            <summary>
-            The base implementation of the INotifyPropertyChanged contract.
-            </summary>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Presentation.NotifyPropertyChanged.OnPropertyChanged(System.String)">
-            <summary>
-            Raises the PropertyChanged event.
-            </summary>
-            <param name="propertyName">Name of the property.</param>
-        </member>
-        <member name="E:FirstFloor.ModernUI.Presentation.NotifyPropertyChanged.PropertyChanged">
-            <summary>
-            Occurs when a property value changes.
             </summary>
         </member>
         <member name="P:FirstFloor.ModernUI.Presentation.Displayable.DisplayName">
@@ -163,6 +147,22 @@
             </summary>
             <value>The links.</value>
         </member>
+        <member name="T:FirstFloor.ModernUI.Presentation.NotifyPropertyChanged">
+            <summary>
+            The base implementation of the INotifyPropertyChanged contract.
+            </summary>
+        </member>
+        <member name="E:FirstFloor.ModernUI.Presentation.NotifyPropertyChanged.PropertyChanged">
+            <summary>
+            Occurs when a property value changes.
+            </summary>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Presentation.NotifyPropertyChanged.OnPropertyChanged(System.String)">
+            <summary>
+            Raises the PropertyChanged event.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+        </member>
         <member name="T:FirstFloor.ModernUI.Presentation.RelayCommand">
             <summary>
             The command that relays its functionality by invoking delegates.
@@ -195,6 +195,16 @@
             Manages the theme, font size and accent colors for a Modern UI application.
             </summary>
         </member>
+        <member name="F:FirstFloor.ModernUI.Presentation.AppearanceManager.DarkThemeSource">
+            <summary>
+            The location of the dark theme resource dictionary.
+            </summary>
+        </member>
+        <member name="F:FirstFloor.ModernUI.Presentation.AppearanceManager.LightThemeSource">
+            <summary>
+            The location of the light theme resource dictionary.
+            </summary>
+        </member>
         <member name="F:FirstFloor.ModernUI.Presentation.AppearanceManager.KeyAccentColor">
             <summary>
             The resource key for the accent color.
@@ -213,16 +223,6 @@
         <member name="F:FirstFloor.ModernUI.Presentation.AppearanceManager.KeyFixedFontSize">
             <summary>
             The resource key for the fixed font size.
-            </summary>
-        </member>
-        <member name="F:FirstFloor.ModernUI.Presentation.AppearanceManager.DarkThemeSource">
-            <summary>
-            The location of the dark theme resource dictionary.
-            </summary>
-        </member>
-        <member name="F:FirstFloor.ModernUI.Presentation.AppearanceManager.LightThemeSource">
-            <summary>
-            The location of the light theme resource dictionary.
             </summary>
         </member>
         <member name="M:FirstFloor.ModernUI.Presentation.AppearanceManager.#ctor">
@@ -523,6 +523,122 @@
             The BBCode lexer.
             </summary>
         </member>
+        <member name="F:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.TokenStartTag">
+            <summary>
+            Start tag
+            </summary>
+        </member>
+        <member name="F:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.TokenEndTag">
+            <summary>
+            End tag
+            </summary>
+        </member>
+        <member name="F:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.TokenAttribute">
+            <summary>
+            Attribute
+            </summary>
+        </member>
+        <member name="F:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.TokenText">
+            <summary>
+            Text
+            </summary>
+        </member>
+        <member name="F:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.TokenLineBreak">
+            <summary>
+            Line break
+            </summary>
+        </member>
+        <member name="F:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.StateNormal">
+            <summary>
+            Normal state
+            </summary>
+        </member>
+        <member name="F:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.StateTag">
+            <summary>
+            Tag state
+            </summary>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:BBCodeLexer"/> class.
+            </summary>
+            <param name="value">The value.</param>
+        </member>
+        <member name="P:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.DefaultState">
+            <summary>
+            Gets the default state of the lexer.
+            </summary>
+            <value>The state of the default.</value>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.NextToken">
+            <summary>
+            Gets the next token.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeParser">
+            <summary>
+            Represents the BBCode parser.
+            </summary>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeParser.ParseContext.CreateRun(System.String)">
+            <summary>
+            Creates a run reflecting the current context settings.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeParser.#ctor(System.String,System.Windows.FrameworkElement)">
+            <summary>
+            Initializes a new instance of the <see cref="T:BBCodeParser"/> class.
+            </summary>
+            <param name="value">The value.</param>
+            <param name="source">The framework source element this parser operates in.</param>
+        </member>
+        <member name="P:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeParser.Commands">
+            <summary>
+            Gets or sets the available navigable commands.
+            </summary>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeParser.Parse">
+            <summary>
+            Parses the text and returns a Span containing the parsed result.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:FirstFloor.ModernUI.Windows.Controls.BBCode.CharBuffer">
+            <summary>
+            Represents a character buffer.
+            </summary>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.CharBuffer.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CharBuffer"/> class.
+            </summary>
+            <param name="value">The value.</param>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.CharBuffer.LA(System.Int32)">
+            <summary>
+            Performs a look-ahead.
+            </summary>
+            <param name="count">The number of character to look ahead.</param>
+            <returns></returns>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.CharBuffer.Mark">
+            <summary>
+            Marks the current position.
+            </summary>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.CharBuffer.GetMark">
+            <summary>
+            Gets the mark.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.CharBuffer.Consume">
+            <summary>
+            Consumes the next character.
+            </summary>
+        </member>
         <member name="T:FirstFloor.ModernUI.Windows.Controls.BBCode.Lexer">
             <summary>
             Provides basic lexer functionality.
@@ -538,6 +654,18 @@
             Initializes a new instance of the <see cref="T:Lexer"/> class.
             </summary>
             <param name="value">The value.</param>
+        </member>
+        <member name="P:FirstFloor.ModernUI.Windows.Controls.BBCode.Lexer.DefaultState">
+            <summary>
+            Gets the default state of the lexer.
+            </summary>
+            <value>The state of the default.</value>
+        </member>
+        <member name="P:FirstFloor.ModernUI.Windows.Controls.BBCode.Lexer.State">
+            <summary>
+            Gets the current state of the lexer.
+            </summary>
+            <value>The state.</value>
         </member>
         <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.Lexer.PushState(System.Int32)">
             <summary>
@@ -649,75 +777,28 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Controls.BBCode.Lexer.DefaultState">
+        <member name="T:FirstFloor.ModernUI.Windows.Controls.BBCode.ParseException">
             <summary>
-            Gets the default state of the lexer.
-            </summary>
-            <value>The state of the default.</value>
-        </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Controls.BBCode.Lexer.State">
-            <summary>
-            Gets the current state of the lexer.
-            </summary>
-            <value>The state.</value>
-        </member>
-        <member name="F:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.TokenStartTag">
-            <summary>
-            Start tag
+            The exception for parse errors.
             </summary>
         </member>
-        <member name="F:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.TokenEndTag">
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.ParseException.#ctor">
             <summary>
-            End tag
+            Initializes a new instance of the <see cref="T:FirstFloor.ModernUI.Windows.Controls.BBCode.ParseException"/> class.
             </summary>
         </member>
-        <member name="F:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.TokenAttribute">
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.ParseException.#ctor(System.String)">
             <summary>
-            Attribute
+            Initializes a new instance of the <see cref="T:FirstFloor.ModernUI.Windows.Controls.BBCode.ParseException"/> class.
             </summary>
+            <param name="message">The message.</param>
         </member>
-        <member name="F:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.TokenText">
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.ParseException.#ctor(System.String,System.Exception)">
             <summary>
-            Text
+            Initializes a new instance of the <see cref="T:FirstFloor.ModernUI.Windows.Controls.BBCode.ParseException"/> class.
             </summary>
-        </member>
-        <member name="F:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.TokenLineBreak">
-            <summary>
-            Line break
-            </summary>
-        </member>
-        <member name="F:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.StateNormal">
-            <summary>
-            Normal state
-            </summary>
-        </member>
-        <member name="F:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.StateTag">
-            <summary>
-            Tag state
-            </summary>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:BBCodeLexer"/> class.
-            </summary>
-            <param name="value">The value.</param>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.NextToken">
-            <summary>
-            Gets the next token.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeLexer.DefaultState">
-            <summary>
-            Gets the default state of the lexer.
-            </summary>
-            <value>The state of the default.</value>
-        </member>
-        <member name="T:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeParser">
-            <summary>
-            Represents the BBCode parser.
-            </summary>
+            <param name="message">The message.</param>
+            <param name="innerException">The inner exception.</param>
         </member>
         <member name="T:FirstFloor.ModernUI.Windows.Controls.BBCode.Parser`1">
             <summary>
@@ -777,87 +858,6 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeParser.#ctor(System.String,System.Windows.FrameworkElement)">
-            <summary>
-            Initializes a new instance of the <see cref="T:BBCodeParser"/> class.
-            </summary>
-            <param name="value">The value.</param>
-            <param name="source">The framework source element this parser operates in.</param>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeParser.Parse">
-            <summary>
-            Parses the text and returns a Span containing the parsed result.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeParser.Commands">
-            <summary>
-            Gets or sets the available navigable commands.
-            </summary>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.BBCodeParser.ParseContext.CreateRun(System.String)">
-            <summary>
-            Creates a run reflecting the current context settings.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:FirstFloor.ModernUI.Windows.Controls.BBCode.CharBuffer">
-            <summary>
-            Represents a character buffer.
-            </summary>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.CharBuffer.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:CharBuffer"/> class.
-            </summary>
-            <param name="value">The value.</param>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.CharBuffer.LA(System.Int32)">
-            <summary>
-            Performs a look-ahead.
-            </summary>
-            <param name="count">The number of character to look ahead.</param>
-            <returns></returns>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.CharBuffer.Mark">
-            <summary>
-            Marks the current position.
-            </summary>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.CharBuffer.GetMark">
-            <summary>
-            Gets the mark.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.CharBuffer.Consume">
-            <summary>
-            Consumes the next character.
-            </summary>
-        </member>
-        <member name="T:FirstFloor.ModernUI.Windows.Controls.BBCode.ParseException">
-            <summary>
-            The exception for parse errors.
-            </summary>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.ParseException.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:FirstFloor.ModernUI.Windows.Controls.BBCode.ParseException"/> class.
-            </summary>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.ParseException.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:FirstFloor.ModernUI.Windows.Controls.BBCode.ParseException"/> class.
-            </summary>
-            <param name="message">The message.</param>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.ParseException.#ctor(System.String,System.Exception)">
-            <summary>
-            Initializes a new instance of the <see cref="T:FirstFloor.ModernUI.Windows.Controls.BBCode.ParseException"/> class.
-            </summary>
-            <param name="message">The message.</param>
-            <param name="innerException">The inner exception.</param>
-        </member>
         <member name="T:FirstFloor.ModernUI.Windows.Controls.BBCode.Token">
             <summary>
             Represents a single token.
@@ -875,14 +875,6 @@
             <param name="value">The value.</param>
             <param name="tokenType">Type of the token.</param>
         </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.Token.ToString">
-            <summary>
-            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
-            </summary>
-            <returns>
-            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
-            </returns>
-        </member>
         <member name="P:FirstFloor.ModernUI.Windows.Controls.BBCode.Token.Value">
             <summary>
             Gets the value.
@@ -894,6 +886,14 @@
             Gets the type of the token.
             </summary>
             <value>The type.</value>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.BBCode.Token.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
         </member>
         <member name="T:FirstFloor.ModernUI.Windows.Controls.BBCode.TokenBuffer">
             <summary>
@@ -938,15 +938,6 @@
             Initializes a new instance of the <see cref="T:FirstFloor.ModernUI.Windows.Controls.ModernDialog"/> class.
             </summary>
         </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernDialog.ShowMessage(System.String,System.String,System.Windows.MessageBoxButton)">
-            <summary>
-            Displays a messagebox.
-            </summary>
-            <param name="text">The text.</param>
-            <param name="title">The title.</param>
-            <param name="button">The button.</param>
-            <returns></returns>
-        </member>
         <member name="P:FirstFloor.ModernUI.Windows.Controls.ModernDialog.CloseCommand">
             <summary>
             Gets the close window command.
@@ -987,6 +978,15 @@
             Gets or sets the dialog buttons.
             </summary>
         </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernDialog.ShowMessage(System.String,System.String,System.Windows.MessageBoxButton)">
+            <summary>
+            Displays a messagebox.
+            </summary>
+            <param name="text">The text.</param>
+            <param name="title">The title.</param>
+            <param name="button">The button.</param>
+            <returns></returns>
+        </member>
         <member name="T:FirstFloor.ModernUI.Windows.Controls.ModernMenu">
             <summary>
             Represents the menu in a Modern UI styled window.
@@ -1017,21 +1017,14 @@
             Defines the VisibleLinkGroups dependency property.
             </summary>
         </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernMenu.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:FirstFloor.ModernUI.Windows.Controls.ModernMenu"/> class.
-            </summary>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernMenu.GetGroupName(FirstFloor.ModernUI.Presentation.LinkGroup)">
-            <summary>
-            Gets a non-null name for given group.
-            </summary>
-            <param name="group"></param>
-            <returns></returns>
-        </member>
         <member name="E:FirstFloor.ModernUI.Windows.Controls.ModernMenu.SelectedSourceChanged">
             <summary>
             Occurs when the selected source has changed.
+            </summary>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernMenu.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FirstFloor.ModernUI.Windows.Controls.ModernMenu"/> class.
             </summary>
         </member>
         <member name="P:FirstFloor.ModernUI.Windows.Controls.ModernMenu.LinkGroups">
@@ -1062,6 +1055,13 @@
             Gets the collection of link groups that are currently visible.
             </summary>
         </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernMenu.GetGroupName(FirstFloor.ModernUI.Presentation.LinkGroup)">
+            <summary>
+            Gets a non-null name for given group.
+            </summary>
+            <param name="group"></param>
+            <returns></returns>
+        </member>
         <member name="T:FirstFloor.ModernUI.Windows.Controls.ModernTab">
             <summary>
             Represents a control that contains multiple pages that share the same space on screen.
@@ -1087,6 +1087,11 @@
             Identifies the SelectedSource dependency property.
             </summary>
         </member>
+        <member name="E:FirstFloor.ModernUI.Windows.Controls.ModernTab.SelectedSourceChanged">
+            <summary>
+            Occurs when the selected source has changed.
+            </summary>
+        </member>
         <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernTab.#ctor">
             <summary>
             Initializes a new instance of the <see cref="T:FirstFloor.ModernUI.Windows.Controls.ModernTab"/> control.
@@ -1095,11 +1100,6 @@
         <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernTab.OnApplyTemplate">
             <summary>
             When overridden in a derived class, is invoked whenever application code or internal processes call System.Windows.FrameworkElement.ApplyTemplate().
-            </summary>
-        </member>
-        <member name="E:FirstFloor.ModernUI.Windows.Controls.ModernTab.SelectedSourceChanged">
-            <summary>
-            Occurs when the selected source has changed.
             </summary>
         </member>
         <member name="P:FirstFloor.ModernUI.Windows.Controls.ModernTab.ContentLoader">
@@ -1324,11 +1324,21 @@
             runtime.
             </summary>
         </member>
+        <member name="P:FirstFloor.ModernUI.Windows.Controls.RelativeAnimatingContentControl.AnimationValueAdapter.OriginalValue">
+            <summary>
+            Gets or sets the original double value.
+            </summary>
+        </member>
         <member name="M:FirstFloor.ModernUI.Windows.Controls.RelativeAnimatingContentControl.AnimationValueAdapter.#ctor(FirstFloor.ModernUI.Windows.Controls.RelativeAnimatingContentControl.DoubleAnimationDimension)">
             <summary>
             Initializes a new instance of the AnimationValueAdapter type.
             </summary>
             <param name="dimension">The dimension of interest for updates.</param>
+        </member>
+        <member name="P:FirstFloor.ModernUI.Windows.Controls.RelativeAnimatingContentControl.AnimationValueAdapter.Dimension">
+            <summary>
+            Gets the dimension of interest for the control.
+            </summary>
         </member>
         <member name="M:FirstFloor.ModernUI.Windows.Controls.RelativeAnimatingContentControl.AnimationValueAdapter.UpdateWithNewDimension(System.Double,System.Double)">
             <summary>
@@ -1339,14 +1349,9 @@
             <param name="width">The width of the control.</param>
             <param name="height">The height of the control.</param>
         </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Controls.RelativeAnimatingContentControl.AnimationValueAdapter.OriginalValue">
+        <member name="P:FirstFloor.ModernUI.Windows.Controls.RelativeAnimatingContentControl.GeneralAnimationValueAdapter`1.Instance">
             <summary>
-            Gets or sets the original double value.
-            </summary>
-        </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Controls.RelativeAnimatingContentControl.AnimationValueAdapter.Dimension">
-            <summary>
-            Gets the dimension of interest for the control.
+            Stores the animation instance.
             </summary>
         </member>
         <member name="M:FirstFloor.ModernUI.Windows.Controls.RelativeAnimatingContentControl.GeneralAnimationValueAdapter`1.GetValue">
@@ -1360,6 +1365,12 @@
             Sets the value for the underlying property of interest.
             </summary>
             <param name="newValue">The new value for the property.</param>
+        </member>
+        <member name="P:FirstFloor.ModernUI.Windows.Controls.RelativeAnimatingContentControl.GeneralAnimationValueAdapter`1.InitialValue">
+            <summary>
+            Gets the initial value (minus the identifying value portion) that the
+            designer stored within the visual state animation property.
+            </summary>
         </member>
         <member name="F:FirstFloor.ModernUI.Windows.Controls.RelativeAnimatingContentControl.GeneralAnimationValueAdapter`1._ratio">
             <summary>
@@ -1407,17 +1418,6 @@
             </summary>
             <param name="sizeToUse">The size of interest to use with a ratio
             computation.</param>
-        </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Controls.RelativeAnimatingContentControl.GeneralAnimationValueAdapter`1.Instance">
-            <summary>
-            Stores the animation instance.
-            </summary>
-        </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Controls.RelativeAnimatingContentControl.GeneralAnimationValueAdapter`1.InitialValue">
-            <summary>
-            Gets the initial value (minus the identifying value portion) that the
-            designer stored within the visual state animation property.
-            </summary>
         </member>
         <member name="T:FirstFloor.ModernUI.Windows.Controls.RelativeAnimatingContentControl.DoubleAnimationToAdapter">
             <summary>
@@ -1542,9 +1542,32 @@
             The name of the control that will display the current content.
             </summary>
         </member>
+        <member name="P:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.CurrentContentPresentationSite">
+            <summary>
+            Gets or sets the current content presentation site.
+            </summary>
+            <value>The current content presentation site.</value>
+        </member>
+        <member name="P:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.PreviousContentPresentationSite">
+            <summary>
+            Gets or sets the previous content presentation site.
+            </summary>
+            <value>The previous content presentation site.</value>
+        </member>
+        <member name="E:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.IsTransitioningChanged">
+            <summary>
+            Occurs when the IsTransitioning value has changed.
+            </summary>
+        </member>
         <member name="F:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl._allowIsTransitioningWrite">
             <summary>
             Indicates whether the control allows writing IsTransitioning.
+            </summary>
+        </member>
+        <member name="P:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.IsTransitioning">
+            <summary>
+            Gets a value indicating whether this instance is currently performing
+            a transition.
             </summary>
         </member>
         <member name="F:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.IsTransitioningProperty">
@@ -1564,6 +1587,17 @@
             The storyboard that is used to transition old and new content.
             </summary>
         </member>
+        <member name="P:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.CurrentTransition">
+            <summary>
+            Gets or sets the storyboard that is used to transition old and new content.
+            </summary>
+        </member>
+        <member name="P:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.Transition">
+            <summary>
+            Gets or sets the name of the transition to use. These correspond
+            directly to the VisualStates inside the PresentationStates group.
+            </summary>
+        </member>
         <member name="F:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.TransitionProperty">
             <summary>
             Identifies the Transition dependency property.
@@ -1575,6 +1609,12 @@
             </summary>
             <param name="d">TransitioningContentControl that changed its Transition.</param>
             <param name="e">Event arguments.</param>
+        </member>
+        <member name="P:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.RestartTransitionOnContentChange">
+            <summary>
+            Gets or sets a value indicating whether the current transition
+            will be aborted when setting new content during a transition.
+            </summary>
         </member>
         <member name="F:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.RestartTransitionOnContentChangeProperty">
             <summary>
@@ -1594,6 +1634,11 @@
             </summary>
             <param name="oldValue">The old value of RestartTransitionOnContentChange.</param>
             <param name="newValue">The new value of RestartTransitionOnContentChange.</param>
+        </member>
+        <member name="E:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.TransitionCompleted">
+            <summary>
+            Occurs when the current transition has completed.
+            </summary>
         </member>
         <member name="M:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.#cctor">
             <summary>
@@ -1644,49 +1689,116 @@
             <param name="newTransition">The new transition.</param>
             <returns>A storyboard or null, if no storyboard was found.</returns>
         </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.CurrentContentPresentationSite">
+        <member name="T:FirstFloor.ModernUI.Windows.Controls.ModernFrame">
             <summary>
-            Gets or sets the current content presentation site.
-            </summary>
-            <value>The current content presentation site.</value>
-        </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.PreviousContentPresentationSite">
-            <summary>
-            Gets or sets the previous content presentation site.
-            </summary>
-            <value>The previous content presentation site.</value>
-        </member>
-        <member name="E:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.IsTransitioningChanged">
-            <summary>
-            Occurs when the IsTransitioning value has changed.
+            A simple content frame implementation with navigation support.
             </summary>
         </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.IsTransitioning">
+        <member name="F:FirstFloor.ModernUI.Windows.Controls.ModernFrame.KeepAliveProperty">
             <summary>
-            Gets a value indicating whether this instance is currently performing
-            a transition.
+            Identifies the KeepAlive attached dependency property.
             </summary>
         </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.CurrentTransition">
+        <member name="F:FirstFloor.ModernUI.Windows.Controls.ModernFrame.KeepContentAliveProperty">
             <summary>
-            Gets or sets the storyboard that is used to transition old and new content.
+            Identifies the KeepContentAlive dependency property.
             </summary>
         </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.Transition">
+        <member name="F:FirstFloor.ModernUI.Windows.Controls.ModernFrame.ContentLoaderProperty">
             <summary>
-            Gets or sets the name of the transition to use. These correspond
-            directly to the VisualStates inside the PresentationStates group.
+            Identifies the ContentLoader dependency property.
             </summary>
         </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.RestartTransitionOnContentChange">
+        <member name="F:FirstFloor.ModernUI.Windows.Controls.ModernFrame.IsLoadingContentProperty">
             <summary>
-            Gets or sets a value indicating whether the current transition
-            will be aborted when setting new content during a transition.
+            Identifies the IsLoadingContent dependency property.
             </summary>
         </member>
-        <member name="E:FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl.TransitionCompleted">
+        <member name="F:FirstFloor.ModernUI.Windows.Controls.ModernFrame.SourceProperty">
             <summary>
-            Occurs when the current transition has completed.
+            Identifies the Source dependency property.
+            </summary>
+        </member>
+        <member name="E:FirstFloor.ModernUI.Windows.Controls.ModernFrame.FragmentNavigation">
+            <summary>
+            Occurs when navigation to a content fragment begins.
+            </summary>
+        </member>
+        <member name="E:FirstFloor.ModernUI.Windows.Controls.ModernFrame.Navigating">
+            <summary>
+            Occurs when a new navigation is requested.
+            </summary>
+            <remarks>
+            The navigating event is also raised when a parent frame is navigating. This allows for cancelling parent navigation.
+            </remarks>
+        </member>
+        <member name="E:FirstFloor.ModernUI.Windows.Controls.ModernFrame.Navigated">
+            <summary>
+            Occurs when navigation to new content has completed.
+            </summary>
+        </member>
+        <member name="E:FirstFloor.ModernUI.Windows.Controls.ModernFrame.NavigationFailed">
+            <summary>
+            Occurs when navigation has failed.
+            </summary>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernFrame.ClearHistory">
+            <summary>
+            Clears page history
+            </summary>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernFrame.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FirstFloor.ModernUI.Windows.Controls.ModernFrame"/> class.
+            </summary>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernFrame.HandleRoutedEvent(System.Windows.Input.CanExecuteRoutedEventArgs)">
+            <summary>
+            Determines whether the routed event args should be handled.
+            </summary>
+            <param name="args"></param>
+            <returns></returns>
+            <remarks>This method prevents parent frames from handling routed commands.</remarks>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernFrame.ShouldKeepContentAlive(System.Object)">
+            <summary>
+            Determines whether the specified content should be kept alive.
+            </summary>
+            <param name="content"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernFrame.GetKeepAlive(System.Windows.DependencyObject)">
+            <summary>
+            Gets a value indicating whether to keep specified object alive in a ModernFrame instance.
+            </summary>
+            <param name="o">The target dependency object.</param>
+            <returns>Whether to keep the object alive. Null to leave the decision to the ModernFrame.</returns>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernFrame.SetKeepAlive(System.Windows.DependencyObject,System.Nullable{System.Boolean})">
+            <summary>
+            Sets a value indicating whether to keep specified object alive in a ModernFrame instance.
+            </summary>
+            <param name="o">The target dependency object.</param>
+            <param name="value">Whether to keep the object alive. Null to leave the decision to the ModernFrame.</param>
+        </member>
+        <member name="P:FirstFloor.ModernUI.Windows.Controls.ModernFrame.KeepContentAlive">
+            <summary>
+            Gets or sets a value whether content should be kept in memory.
+            </summary>
+        </member>
+        <member name="P:FirstFloor.ModernUI.Windows.Controls.ModernFrame.ContentLoader">
+            <summary>
+            Gets or sets the content loader.
+            </summary>
+        </member>
+        <member name="P:FirstFloor.ModernUI.Windows.Controls.ModernFrame.IsLoadingContent">
+            <summary>
+            Gets a value indicating whether this instance is currently loading content.
+            </summary>
+        </member>
+        <member name="P:FirstFloor.ModernUI.Windows.Controls.ModernFrame.Source">
+            <summary>
+            Gets or sets the source of the current content.
             </summary>
         </member>
         <member name="T:FirstFloor.ModernUI.Windows.Converters.BooleanToFontWeightConverter">
@@ -1868,19 +1980,6 @@
             Loads XAML files using Application.LoadComponent.
             </summary>
         </member>
-        <member name="T:FirstFloor.ModernUI.Windows.IContentLoader">
-            <summary>
-            The contract for loading content.
-            </summary>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.IContentLoader.LoadContentAsync(System.Uri,System.Threading.CancellationToken)">
-            <summary>
-            Asynchronously loads content from specified uri.
-            </summary>
-            <param name="uri">The content uri.</param>
-            <param name="cancellationToken">The token used to cancel the load content task.</param>
-            <returns>The loaded content.</returns>
-        </member>
         <member name="M:FirstFloor.ModernUI.Windows.DefaultContentLoader.LoadContentAsync(System.Uri,System.Threading.CancellationToken)">
             <summary>
             Asynchronously loads content from specified uri.
@@ -1901,36 +2000,10 @@
             The default link navigator with support for loading frame content, external link navigation using the default browser and command execution.
             </summary>
         </member>
-        <member name="T:FirstFloor.ModernUI.Windows.Navigation.ILinkNavigator">
-            <summary>
-            The hyperlink navigator contract.
-            </summary>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Navigation.ILinkNavigator.Navigate(System.Uri,System.Windows.FrameworkElement,System.String)">
-            <summary>
-            Performs navigation to specified link.
-            </summary>
-            <param name="uri">The uri to navigate to.</param>
-            <param name="source">The source element that triggers the navigation. Required for frame navigation.</param>
-            <param name="parameter">An optional command parameter or navigation target.</param>
-        </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Navigation.ILinkNavigator.Commands">
-            <summary>
-            Gets or sets the navigable commands.
-            </summary>
-        </member>
         <member name="M:FirstFloor.ModernUI.Windows.Navigation.DefaultLinkNavigator.#ctor">
             <summary>
             Initializes a new instance of the <see cref="T:FirstFloor.ModernUI.Windows.Navigation.DefaultLinkNavigator"/> class.
             </summary>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Navigation.DefaultLinkNavigator.Navigate(System.Uri,System.Windows.FrameworkElement,System.String)">
-            <summary>
-            Performs navigation to specified link.
-            </summary>
-            <param name="uri">The uri to navigate to.</param>
-            <param name="source">The source element that triggers the navigation. Required for frame navigation.</param>
-            <param name="parameter">An optional command parameter or navigation target.</param>
         </member>
         <member name="P:FirstFloor.ModernUI.Windows.Navigation.DefaultLinkNavigator.ExternalSchemes">
             <summary>
@@ -1945,6 +2018,14 @@
             Gets or sets the navigable commands.
             </summary>
         </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Navigation.DefaultLinkNavigator.Navigate(System.Uri,System.Windows.FrameworkElement,System.String)">
+            <summary>
+            Performs navigation to specified link.
+            </summary>
+            <param name="uri">The uri to navigate to.</param>
+            <param name="source">The source element that triggers the navigation. Required for frame navigation.</param>
+            <param name="parameter">An optional command parameter or navigation target.</param>
+        </member>
         <member name="T:FirstFloor.ModernUI.Windows.Navigation.FragmentNavigationEventArgs">
             <summary>
             Provides data for fragment navigation events.
@@ -1955,211 +2036,27 @@
             Gets the uniform resource identifier (URI) fragment.
             </summary>
         </member>
-        <member name="T:FirstFloor.ModernUI.Windows.IContent">
+        <member name="T:FirstFloor.ModernUI.Windows.Navigation.ILinkNavigator">
             <summary>
-            Defines the optional contract for content loaded in a ModernFrame.
+            The hyperlink navigator contract.
             </summary>
         </member>
-        <member name="M:FirstFloor.ModernUI.Windows.IContent.OnFragmentNavigation(FirstFloor.ModernUI.Windows.Navigation.FragmentNavigationEventArgs)">
+        <member name="P:FirstFloor.ModernUI.Windows.Navigation.ILinkNavigator.Commands">
             <summary>
-            Called when navigation to a content fragment begins.
-            </summary>
-            <param name="e">An object that contains the navigation data.</param>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.IContent.OnNavigatedFrom(FirstFloor.ModernUI.Windows.Navigation.NavigationEventArgs)">
-            <summary>
-            Called when this instance is no longer the active content in a frame.
-            </summary>
-            <param name="e">An object that contains the navigation data.</param>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.IContent.OnNavigatedTo(FirstFloor.ModernUI.Windows.Navigation.NavigationEventArgs)">
-            <summary>
-            Called when a this instance becomes the active content in a frame.
-            </summary>
-            <param name="e">An object that contains the navigation data.</param>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.IContent.OnNavigatingFrom(FirstFloor.ModernUI.Windows.Navigation.NavigatingCancelEventArgs)">
-            <summary>
-            Called just before this instance is no longer the active content in a frame.
-            </summary>
-            <param name="e">An object that contains the navigation data.</param>
-            <remarks>The method is also invoked when parent frames are about to navigate.</remarks>
-        </member>
-        <member name="T:FirstFloor.ModernUI.Windows.Media.VisualTreeHelperEx">
-            <summary>
-            Provides addition visual tree helper methods.
+            Gets or sets the navigable commands.
             </summary>
         </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Media.VisualTreeHelperEx.TryGetVisualStateGroup(System.Windows.DependencyObject,System.String)">
+        <member name="M:FirstFloor.ModernUI.Windows.Navigation.ILinkNavigator.Navigate(System.Uri,System.Windows.FrameworkElement,System.String)">
             <summary>
-            Gets specified visual state group.
+            Performs navigation to specified link.
             </summary>
-            <param name="dependencyObject">The dependency object.</param>
-            <param name="groupName">Name of the group.</param>
-            <returns></returns>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Media.VisualTreeHelperEx.GetImplementationRoot(System.Windows.DependencyObject)">
-            <summary>
-            Gets the implementation root.
-            </summary>
-            <param name="dependencyObject">The dependency object.</param>
-            <returns></returns>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Media.VisualTreeHelperEx.Ancestors(System.Windows.DependencyObject)">
-            <summary>
-            Returns a collection of the visual ancestor elements of specified dependency object.
-            </summary>
-            <param name="dependencyObject">The dependency object.</param>
-            <returns>
-            A collection that contains the ancestors elements.
-            </returns>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Media.VisualTreeHelperEx.AncestorsAndSelf(System.Windows.DependencyObject)">
-            <summary>
-            Returns a collection of visual elements that contain specified object, and the ancestors of specified object.
-            </summary>
-            <param name="dependencyObject">The dependency object.</param>
-            <returns>
-            A collection that contains the ancestors elements and the object itself.
-            </returns>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Media.VisualTreeHelperEx.GetParent(System.Windows.DependencyObject)">
-            <summary>
-            Gets the parent for specified dependency object.
-            </summary>
-            <param name="dependencyObject">The dependency object</param>
-            <returns>The parent object or null if there is no parent.</returns>
-        </member>
-        <member name="T:FirstFloor.ModernUI.Windows.Controls.ModernFrame">
-            <summary>
-            A simple content frame implementation with navigation support.
-            </summary>
-        </member>
-        <member name="F:FirstFloor.ModernUI.Windows.Controls.ModernFrame.KeepAliveProperty">
-            <summary>
-            Identifies the KeepAlive attached dependency property.
-            </summary>
-        </member>
-        <member name="F:FirstFloor.ModernUI.Windows.Controls.ModernFrame.KeepContentAliveProperty">
-            <summary>
-            Identifies the KeepContentAlive dependency property.
-            </summary>
-        </member>
-        <member name="F:FirstFloor.ModernUI.Windows.Controls.ModernFrame.ContentLoaderProperty">
-            <summary>
-            Identifies the ContentLoader dependency property.
-            </summary>
-        </member>
-        <member name="F:FirstFloor.ModernUI.Windows.Controls.ModernFrame.IsLoadingContentProperty">
-            <summary>
-            Identifies the IsLoadingContent dependency property.
-            </summary>
-        </member>
-        <member name="F:FirstFloor.ModernUI.Windows.Controls.ModernFrame.SourceProperty">
-            <summary>
-            Identifies the Source dependency property.
-            </summary>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernFrame.ClearHistory">
-            <summary>
-            Clears page history
-            </summary>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernFrame.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:FirstFloor.ModernUI.Windows.Controls.ModernFrame"/> class.
-            </summary>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernFrame.HandleRoutedEvent(System.Windows.Input.CanExecuteRoutedEventArgs)">
-            <summary>
-            Determines whether the routed event args should be handled.
-            </summary>
-            <param name="args"></param>
-            <returns></returns>
-            <remarks>This method prevents parent frames from handling routed commands.</remarks>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernFrame.ShouldKeepContentAlive(System.Object)">
-            <summary>
-            Determines whether the specified content should be kept alive.
-            </summary>
-            <param name="content"></param>
-            <returns></returns>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernFrame.GetKeepAlive(System.Windows.DependencyObject)">
-            <summary>
-            Gets a value indicating whether to keep specified object alive in a ModernFrame instance.
-            </summary>
-            <param name="o">The target dependency object.</param>
-            <returns>Whether to keep the object alive. Null to leave the decision to the ModernFrame.</returns>
-        </member>
-        <member name="M:FirstFloor.ModernUI.Windows.Controls.ModernFrame.SetKeepAlive(System.Windows.DependencyObject,System.Nullable{System.Boolean})">
-            <summary>
-            Sets a value indicating whether to keep specified object alive in a ModernFrame instance.
-            </summary>
-            <param name="o">The target dependency object.</param>
-            <param name="value">Whether to keep the object alive. Null to leave the decision to the ModernFrame.</param>
-        </member>
-        <member name="E:FirstFloor.ModernUI.Windows.Controls.ModernFrame.FragmentNavigation">
-            <summary>
-            Occurs when navigation to a content fragment begins.
-            </summary>
-        </member>
-        <member name="E:FirstFloor.ModernUI.Windows.Controls.ModernFrame.Navigating">
-            <summary>
-            Occurs when a new navigation is requested.
-            </summary>
-            <remarks>
-            The navigating event is also raised when a parent frame is navigating. This allows for cancelling parent navigation.
-            </remarks>
-        </member>
-        <member name="E:FirstFloor.ModernUI.Windows.Controls.ModernFrame.Navigated">
-            <summary>
-            Occurs when navigation to new content has completed.
-            </summary>
-        </member>
-        <member name="E:FirstFloor.ModernUI.Windows.Controls.ModernFrame.NavigationFailed">
-            <summary>
-            Occurs when navigation has failed.
-            </summary>
-        </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Controls.ModernFrame.KeepContentAlive">
-            <summary>
-            Gets or sets a value whether content should be kept in memory.
-            </summary>
-        </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Controls.ModernFrame.ContentLoader">
-            <summary>
-            Gets or sets the content loader.
-            </summary>
-        </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Controls.ModernFrame.IsLoadingContent">
-            <summary>
-            Gets a value indicating whether this instance is currently loading content.
-            </summary>
-        </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Controls.ModernFrame.Source">
-            <summary>
-            Gets or sets the source of the current content.
-            </summary>
+            <param name="uri">The uri to navigate to.</param>
+            <param name="source">The source element that triggers the navigation. Required for frame navigation.</param>
+            <param name="parameter">An optional command parameter or navigation target.</param>
         </member>
         <member name="T:FirstFloor.ModernUI.Windows.Navigation.NavigatingCancelEventArgs">
             <summary>
-            Provides data for the <see cref="M:FirstFloor.ModernUI.Windows.IContent.OnNavigatingFrom(FirstFloor.ModernUI.Windows.Navigation.NavigatingCancelEventArgs)"/> method and the <see cref="E:FirstFloor.ModernUI.Windows.Controls.ModernFrame.Navigating"/> event.
-            </summary>
-        </member>
-        <member name="T:FirstFloor.ModernUI.Windows.Navigation.NavigationBaseEventArgs">
-            <summary>
-            Defines the base navigation event arguments.
-            </summary>
-        </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Navigation.NavigationBaseEventArgs.Frame">
-            <summary>
-            Gets the frame that raised this event.
-            </summary>
-        </member>
-        <member name="P:FirstFloor.ModernUI.Windows.Navigation.NavigationBaseEventArgs.Source">
-            <summary>
-            Gets the source uri for the target being navigated to.
+            Provides data for the <see cref="M:FirstFloor.ModernUI.Windows.IContent.OnNavigatingFrom(FirstFloor.ModernUI.Windows.Navigation.NavigatingCancelEventArgs)" /> method and the <see cref="E:FirstFloor.ModernUI.Windows.Controls.ModernFrame.Navigating"/> event.
             </summary>
         </member>
         <member name="P:FirstFloor.ModernUI.Windows.Navigation.NavigatingCancelEventArgs.IsParentFrameNavigating">
@@ -2175,6 +2072,21 @@
         <member name="P:FirstFloor.ModernUI.Windows.Navigation.NavigatingCancelEventArgs.Cancel">
             <summary>
             Gets or sets a value indicating whether the event should be canceled.
+            </summary>
+        </member>
+        <member name="T:FirstFloor.ModernUI.Windows.Navigation.NavigationBaseEventArgs">
+            <summary>
+            Defines the base navigation event arguments.
+            </summary>
+        </member>
+        <member name="P:FirstFloor.ModernUI.Windows.Navigation.NavigationBaseEventArgs.Frame">
+            <summary>
+            Gets the frame that raised this event.
+            </summary>
+        </member>
+        <member name="P:FirstFloor.ModernUI.Windows.Navigation.NavigationBaseEventArgs.Source">
+            <summary>
+            Gets the source uri for the target being navigated to.
             </summary>
         </member>
         <member name="T:FirstFloor.ModernUI.Windows.Navigation.NavigationEventArgs">
@@ -2272,6 +2184,94 @@
             <summary>
             Reloading the current content.
             </summary>
+        </member>
+        <member name="T:FirstFloor.ModernUI.Windows.IContent">
+            <summary>
+            Defines the optional contract for content loaded in a ModernFrame.
+            </summary>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.IContent.OnFragmentNavigation(FirstFloor.ModernUI.Windows.Navigation.FragmentNavigationEventArgs)">
+            <summary>
+            Called when navigation to a content fragment begins.
+            </summary>
+            <param name="e">An object that contains the navigation data.</param>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.IContent.OnNavigatedFrom(FirstFloor.ModernUI.Windows.Navigation.NavigationEventArgs)">
+            <summary>
+            Called when this instance is no longer the active content in a frame.
+            </summary>
+            <param name="e">An object that contains the navigation data.</param>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.IContent.OnNavigatedTo(FirstFloor.ModernUI.Windows.Navigation.NavigationEventArgs)">
+            <summary>
+            Called when a this instance becomes the active content in a frame.
+            </summary>
+            <param name="e">An object that contains the navigation data.</param>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.IContent.OnNavigatingFrom(FirstFloor.ModernUI.Windows.Navigation.NavigatingCancelEventArgs)">
+            <summary>
+            Called just before this instance is no longer the active content in a frame.
+            </summary>
+            <param name="e">An object that contains the navigation data.</param>
+            <remarks>The method is also invoked when parent frames are about to navigate.</remarks>
+        </member>
+        <member name="T:FirstFloor.ModernUI.Windows.IContentLoader">
+            <summary>
+            The contract for loading content.
+            </summary>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.IContentLoader.LoadContentAsync(System.Uri,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously loads content from specified uri.
+            </summary>
+            <param name="uri">The content uri.</param>
+            <param name="cancellationToken">The token used to cancel the load content task.</param>
+            <returns>The loaded content.</returns>
+        </member>
+        <member name="T:FirstFloor.ModernUI.Windows.Media.VisualTreeHelperEx">
+            <summary>
+            Provides addition visual tree helper methods.
+            </summary>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Media.VisualTreeHelperEx.TryGetVisualStateGroup(System.Windows.DependencyObject,System.String)">
+            <summary>
+            Gets specified visual state group.
+            </summary>
+            <param name="dependencyObject">The dependency object.</param>
+            <param name="groupName">Name of the group.</param>
+            <returns></returns>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Media.VisualTreeHelperEx.GetImplementationRoot(System.Windows.DependencyObject)">
+            <summary>
+            Gets the implementation root.
+            </summary>
+            <param name="dependencyObject">The dependency object.</param>
+            <returns></returns>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Media.VisualTreeHelperEx.Ancestors(System.Windows.DependencyObject)">
+            <summary>
+            Returns a collection of the visual ancestor elements of specified dependency object.
+            </summary>
+            <param name="dependencyObject">The dependency object.</param>
+            <returns>
+            A collection that contains the ancestors elements.
+            </returns>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Media.VisualTreeHelperEx.AncestorsAndSelf(System.Windows.DependencyObject)">
+            <summary>
+            Returns a collection of visual elements that contain specified object, and the ancestors of specified object.
+            </summary>
+            <param name="dependencyObject">The dependency object.</param>
+            <returns>
+            A collection that contains the ancestors elements and the object itself.
+            </returns>
+        </member>
+        <member name="M:FirstFloor.ModernUI.Windows.Media.VisualTreeHelperEx.GetParent(System.Windows.DependencyObject)">
+            <summary>
+            Gets the parent for specified dependency object.
+            </summary>
+            <param name="dependencyObject">The dependency object</param>
+            <returns>The parent object or null if there is no parent.</returns>
         </member>
     </members>
 </doc>
