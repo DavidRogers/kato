@@ -92,11 +92,6 @@
 				cal:Message.Attach="ClearSelection"
 				ToolTip="Click here to toggle project selection">Clear</Button>
 
-			<Button Margin="4,0,0,4" Padding="4 2" Grid.Column="2"
-                    cal:Message.Attach="ToggleSelection"
-                    ToolTip="Click here to toggle project selection">Toggle</Button>
-
-
 			<TextBox DockPanel.Dock="Top" x:Name="FilterBox" Padding="3" FontSize="12" Grid.Column="3"
                      Margin="4,0,0,4"
                      Text="{Binding SubscribeFilter, UpdateSourceTrigger=PropertyChanged}"

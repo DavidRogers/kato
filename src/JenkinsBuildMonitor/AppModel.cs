@@ -168,14 +168,14 @@ namespace Kato
 
 		public void ClearFilter(ActionExecutionContext context)
 		{
-			var eventArgs = (KeyEventArgs)context.EventArgs;
+			var eventArgs = (KeyEventArgs) context.EventArgs;
 			if (eventArgs.Key == Key.Escape)
 				SubscribeFilter = "";
 		}
 
 		public void AddServerEnter(ActionExecutionContext context)
 		{
-			var eventArgs = (KeyEventArgs)context.EventArgs;
+			var eventArgs = (KeyEventArgs) context.EventArgs;
 			if (eventArgs.Key == Key.Enter)
 				AddServer();
 		}
@@ -207,10 +207,6 @@ namespace Kato
 		}
 
 
-		public void ToggleSelection()
-		{
-			SetJobSubscriptions("t");
-		}
 		public void ClearSelection()
 		{
 			SetJobSubscriptions("c");
@@ -232,17 +228,14 @@ namespace Kato
 			{
 				switch (mode)
 				{
-					case "c":
-						j.IsSubscribed = false;
-						break;
-					case "t":
-						j.IsSubscribed = !j.IsSubscribed;
-						break;
-					case "a":
-						j.IsSubscribed = true;
-						break;
-					default:
-						break;
+				case "c":
+					j.IsSubscribed = false;
+					break;
+				case "a":
+					j.IsSubscribed = true;
+					break;
+				default:
+					break;
 				}
 
 			}
@@ -253,7 +246,7 @@ namespace Kato
 		public void OpenDashboard()
 		{
 			if (Application.Current.MainWindow != null)
-				((MainWindow)Application.Current.MainWindow).OpenDashboard();
+				((MainWindow) Application.Current.MainWindow).OpenDashboard();
 		}
 
 		public bool AllowExit { get; set; }
@@ -298,21 +291,21 @@ namespace Kato
 			string name;
 			switch (status)
 			{
-				case BuildStatus.Success:
-					name = "green";
-					break;
-				case BuildStatus.SuccessAndBuilding:
-					name = "yellow";
-					break;
-				case BuildStatus.Failed:
-					name = "red";
-					break;
-				case BuildStatus.FailedAndBuilding:
-					name = "orange";
-					break;
-				default:
-					name = "gray";
-					break;
+			case BuildStatus.Success:
+				name = "green";
+				break;
+			case BuildStatus.SuccessAndBuilding:
+				name = "yellow";
+				break;
+			case BuildStatus.Failed:
+				name = "red";
+				break;
+			case BuildStatus.FailedAndBuilding:
+				name = "orange";
+				break;
+			default:
+				name = "gray";
+				break;
 			}
 
 			return name;
@@ -360,7 +353,7 @@ namespace Kato
 						string data = Encoding.UTF8.GetString(temp.Buffer);
 						var xml = XElement.Parse(data);
 						var urlElement = xml.Elements("url").FirstOrDefault();
-						AddServers(new[] { (string)urlElement });
+						AddServers(new[] { (string) urlElement });
 					}
 				}, TaskScheduler.FromCurrentSynchronizationContext());
 
@@ -423,7 +416,7 @@ namespace Kato
 
 		private void JobOnStatusChanged(object sender, StatusChangedArgs args)
 		{
-			JobViewModel job = (JobViewModel)sender;
+			JobViewModel job = (JobViewModel) sender;
 
 			if (args.NewValue == BuildStatus.Failed)
 				m_notifyIcon.ShowBalloonTip(job.Name, "Build " + args.NewValue, BalloonIcon.Error);
@@ -488,7 +481,7 @@ namespace Kato
 
 		private DataTemplate GetOverlayIcon(BuildStatus newValue)
 		{
-			var icon = ((DataTemplate)Application.Current.Resources[newValue + "OverlayIcon"]);
+			var icon = ((DataTemplate) Application.Current.Resources[newValue + "OverlayIcon"]);
 			return icon;
 		}
 
