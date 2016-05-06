@@ -28,8 +28,8 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>http://fieryjoy.com/apps/kato/</InstallUrl>
-    <SupportUrl>http://kato.uservoice.com</SupportUrl>
-    <ErrorReportUrl>http://kato.uservoice.com</ErrorReportUrl>
+    <SupportUrl>https://github.com/DavidRogers/kato/issues</SupportUrl>
+    <ErrorReportUrl>https://github.com/DavidRogers/kato/issues</ErrorReportUrl>
     <ProductName>Kato</ProductName>
     <PublisherName>fieryjoy</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
@@ -64,7 +64,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>6D547EB2241230694660848AC25728922B120C6D</ManifestCertificateThumbprint>
@@ -323,6 +323,18 @@
       <Project>{93676c49-f329-4c3c-bf4e-186b36bea067}</Project>
       <Name>JenkinsApiClient</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PublishFile Include="System.Windows.Interactivity">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>Assembly</FileType>
+    </PublishFile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
