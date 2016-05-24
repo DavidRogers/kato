@@ -27,6 +27,12 @@ namespace Kato
 			try
 			{
 				s_logger.Info("Saving user settings");
+
+                		if (!Directory.Exists(s_savedFilePathBase))
+                		{
+                    			Directory.CreateDirectory(s_savedFilePathBase);
+                		}
+                		
 				File.WriteAllText(filePath, serializedData, Encoding.UTF8);
 			}
 			catch (Exception e)
