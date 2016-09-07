@@ -36,7 +36,7 @@ namespace Kato
 			m_taskbarItemInfo = taskbarItemInfo;
 			m_servers = new ObservableCollection<ServerViewModel>();
 			m_settings = PersistedUserSettings.Open<UserSettings>() ?? new UserSettings { Servers = new List<SavedJenkinsServers>() };
-			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(c_projectUpdateInterval), DispatcherPriority.Background, (sender, args) => Update(), Dispatcher.CurrentDispatcher);
+			m_timer = new DispatcherTimer(s_projectUpdateInterval, DispatcherPriority.Background, (sender, args) => Update(), Dispatcher.CurrentDispatcher);
 			Status = new StatusViewModel();
 			m_subscribedJobs = new ObservableCollection<JobViewModel>();
 
@@ -533,7 +533,7 @@ namespace Kato
 		}
 
 
-		private const int c_projectUpdateInterval = 10;
+		private static readonly TimeSpan s_projectUpdateInterval = TimeSpan.FromSeconds(60);
 		DispatcherTimer m_updateTimer;
 		static readonly log4net.ILog s_logger = log4net.LogManager.GetLogger("AppModel");
 		readonly ObservableCollection<ServerViewModel> m_servers;
