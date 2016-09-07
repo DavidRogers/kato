@@ -30,6 +30,7 @@ Thumbs.db
 *.tmp
 SolutionInfo.cs
 *.DotSettings.user
+.vs/
 
 # NuGet Packages
 *.nupkg
