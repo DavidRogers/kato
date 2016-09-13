@@ -96,7 +96,7 @@
 					<EventTrigger.Actions>
 						<BeginStoryboard >
 							<Storyboard TargetName="BackgroundBrush">
-								<ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Color" To="BurlyWood" />
+								<ColorAnimation Duration="0:0:0" Storyboard.TargetProperty="Color" To="BurlyWood" />
 							</Storyboard>
 						</BeginStoryboard>
 					</EventTrigger.Actions>
@@ -105,7 +105,7 @@
 					<EventTrigger.Actions>
 						<BeginStoryboard >
 							<Storyboard TargetName="BackgroundBrush">
-								<ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Color" To="Transparent" />
+								<ColorAnimation Duration="0:0:0" Storyboard.TargetProperty="Color" To="Transparent" />
 							</Storyboard>
 						</BeginStoryboard>
 					</EventTrigger.Actions>
