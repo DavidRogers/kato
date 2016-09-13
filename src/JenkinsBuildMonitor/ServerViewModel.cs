@@ -10,14 +10,14 @@ namespace Kato
 	public enum BuildStatus
 	{
 		Unknown,
-		Disabled,
 		AbortedAndBuilding,
 		Aborted,
 		FailedAndBuilding,
 		Failed,
 		SuccessAndBuilding,
 		Success,
-        Unstable,
+		Unstable,
+		Disabled,
 	}
 
 	public class ServerViewModel : PropertyChangedBase
