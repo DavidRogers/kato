@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/98vomkkdrwydhmjj?svg=true)](https://ci.appveyor.com/project/DavidRogers/kato)
+
 # kato : A Windows client for monitoring Jenkins builds
 
 Kato is a Jenkins build monitor for Windows. It allows you to keep track of the builds you care about.
