@@ -17,6 +17,7 @@ namespace Kato
 		Failed,
 		SuccessAndBuilding,
 		Success,
+        Unstable,
 	}
 
 	public class ServerViewModel : PropertyChangedBase

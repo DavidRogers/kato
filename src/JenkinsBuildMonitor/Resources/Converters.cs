@@ -52,6 +52,9 @@ namespace Kato.Resources
 			case BuildStatus.Disabled:
 				text = "Disabled";
 				break;
+            case BuildStatus.Unstable:
+                text = "Unstable";
+                break;
 			default:
 				text = status.ToString();
 				break;
@@ -121,9 +124,12 @@ namespace Kato.Resources
 			case "red_anime":
 				color = alterBuilding ? Brushes.DarkRed : Brushes.Orange;
 				break;
-			case "aborted":
-			case "disabled":
-			default:
+            case "yellow_anime":
+                color = Brushes.Yellow;
+                break;
+            case "disabled":
+            case "aborted":
+  			default:
 				color = Brushes.Gray;
 				break;
 			}
@@ -157,6 +163,9 @@ namespace Kato.Resources
 			case "red_anime":
 				color = Colors.Red;
 				break;
+            case "yellow_anime":
+                color = Colors.Yellow;
+                break;
 			case "aborted":
 			case "disabled":
 			default:
