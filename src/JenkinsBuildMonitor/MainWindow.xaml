@@ -23,7 +23,7 @@
 					<mui:Link DisplayName="" Source="Pages/Main.xaml" />
 				</mui:LinkGroup.Links>
 			</mui:LinkGroup>
-			<mui:LinkGroup DisplayName="Settings">
+			<mui:LinkGroup DisplayName="Jobs">
 			<mui:LinkGroup.Links>
 					<mui:Link DisplayName="" Source="Pages/Subscribe.xaml" />
 				</mui:LinkGroup.Links>
@@ -31,10 +31,9 @@
 		</mui:ModernWindow.MenuLinkGroups>
 		<mui:ModernWindow.TitleLinks>
 			<mui:LinkCollection>
-			<mui:Link DisplayName="about" Source="Pages/About.xaml" />
+			<mui:Link DisplayName="settings" Source="Pages/About.xaml" />
 			</mui:LinkCollection>
 		</mui:ModernWindow.TitleLinks>
-	<!--Id="{x:Static kato:MainWindow.AppGuid}"-->
 	<taskbarNotification:TaskbarIcon x:Name="MyNotifyIcon" 
 		Visibility="Visible"
 		ToolTipService.ShowDuration="60000"
@@ -53,7 +52,6 @@
 					<componentModel:SortDescription PropertyName="Status" />
 					<componentModel:SortDescription PropertyName="Name" />
 				</CollectionViewSource.SortDescriptions>
-
 			</CollectionViewSource>
 		</taskbarNotification:TaskbarIcon.Resources>
 		<taskbarNotification:TaskbarIcon.TrayToolTip>

@@ -102,6 +102,7 @@
 			</TextBox>
 		</Grid>
 
+		<Label Visibility="{Binding HasInternetConnection, Converter={x:Static resources:Converters.ReverseBoolToVisibilityConverter}}" Padding="4" Background="LightYellow" DockPanel.Dock="Bottom">No Internet Connection Found.</Label>
 
 		<ScrollViewer DockPanel.Dock="Bottom" VerticalScrollBarVisibility="Auto">
 			<ItemsControl ItemsSource="{Binding Servers, Mode=OneTime}">

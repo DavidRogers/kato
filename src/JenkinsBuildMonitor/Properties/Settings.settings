@@ -11,5 +11,8 @@
     <Setting Name="ViewMode" Type="System.String" Scope="User">
       <Value Profile="(Default)">List</Value>
     </Setting>
+    <Setting Name="JobUpdateInterval" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

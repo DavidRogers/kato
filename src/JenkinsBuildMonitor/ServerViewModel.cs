@@ -24,8 +24,8 @@ namespace Kato
 	{
 		public ServerViewModel(JenkinsClient client, Server server)
 		{
-			m_server = server;
 			m_jobs = new ObservableCollection<JobViewModel>();
+			m_server = server;
 			m_client = client;
 
 			Initialize();
@@ -33,7 +33,7 @@ namespace Kato
 
 		public ObservableCollection<JobViewModel> Jobs { get { return m_jobs; } }
 		public string DomainUrl { get { return m_client.BaseUri.OriginalString; } }
-		public bool RequiresAuthentication { get { return m_server.RequiresAuthentication; } }
+		public bool RequiresAuthentication { get { return m_server?.RequiresAuthentication ?? false; } }
 		public string Description { get; private set; }
 
 		public bool IsValid
@@ -49,12 +49,18 @@ namespace Kato
 
 		public void Update()
 		{
+			if (!IsValid)
+				return;
+
 			foreach (JobViewModel job in m_jobs.Where(x => x.IsSubscribed))
 				UpdateJob(job);
 		}
 
 		private void UpdateJob(JobViewModel job)
 		{
+			if (!IsValid)
+				return;
+
 			try
 			{
 				Job source = JsonConvert.DeserializeObject<Job>(m_client.GetJsonAsync<Job>(job.Path).LogErrors().Result);
@@ -70,12 +76,14 @@ namespace Kato
 			}
 			catch (Exception)
 			{
-
 			}
 		}
 
 		private void UpdateLastBuild(JobViewModel job, Build source)
 		{
+			if (!IsValid)
+				return;
+
 			if (job.LastBuild == null)
 				job.LastBuild = new BuildViewModel();
 
@@ -96,6 +104,10 @@ namespace Kato
 
 		private void Initialize()
 		{
+			IsValid = false;
+			if (m_server == null)
+				return;
+
 			Description = m_server.NodeDescription;
 			IsValid = true;
 

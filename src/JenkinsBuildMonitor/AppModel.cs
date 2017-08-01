@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Deployment.Application;
 using System.Drawing;
 using System.Linq;
@@ -36,7 +37,8 @@ namespace Kato
 			m_taskbarItemInfo = taskbarItemInfo;
 			m_servers = new ObservableCollection<ServerViewModel>();
 			m_settings = PersistedUserSettings.Open<UserSettings>() ?? new UserSettings { Servers = new List<SavedJenkinsServers>() };
-			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(c_projectUpdateInterval), DispatcherPriority.Background, (sender, args) => Update(), Dispatcher.CurrentDispatcher);
+			m_updateTimerInterval = m_settings.UpdateInterval ?? c_projectUpdateInterval;
+			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(m_updateTimerInterval), DispatcherPriority.Background, (sender, args) => Update(), Dispatcher.CurrentDispatcher);
 			Status = new StatusViewModel();
 			m_subscribedJobs = new ObservableCollection<JobViewModel>();
 
@@ -47,24 +49,8 @@ namespace Kato
 				m_updateTimer = new DispatcherTimer(TimeSpan.FromHours(4), DispatcherPriority.Background, CheckForUpdate, Dispatcher.CurrentDispatcher);
 			}
 
-			Initialize();
-		}
-
-		public void SaveSettings()
-		{
-			UserSettings settings = new UserSettings { Servers = new List<SavedJenkinsServers>() };
-			foreach (ServerViewModel server in Servers)
-			{
-				List<SavedJob> jobs = server.Jobs.Where(x => x.IsSubscribed).Select(x => new SavedJob { Name = x.Name }).ToList();
-				settings.Servers.Add(new SavedJenkinsServers { DomainUrl = server.DomainUrl, Jobs = jobs, RequiresAuthentication = server.RequiresAuthentication });
-			}
-
-			PersistedUserSettings.Save(settings);
-			Settings.Default.ViewMode = ViewMode.ToString();
-			Settings.Default.Servers = new StringCollection();
-			Settings.Default.Servers.AddRange(Servers.Select(x => x.DomainUrl).ToArray());
-			Settings.Default.Save();
-
+			if (CheckForInternetConnection())
+				Initialize();
 		}
 
 		public ObservableCollection<ServerViewModel> Servers { get { return m_servers; } }
@@ -81,6 +67,22 @@ namespace Kato
 		}
 
 		public StatusViewModel Status { get; private set; }
+
+		public bool HasInternetConnection
+		{
+			get { return m_hasInternetConnection; }
+			set
+			{
+				if (Equals(value, m_hasInternetConnection)) return;
+				m_hasInternetConnection = value;
+				if (value)
+				{
+					m_servers.Clear();
+					Initialize();
+				}
+				NotifyOfPropertyChange(() => HasInternetConnection);
+			}
+		}
 
 		public string NewServerUrl
 		{
@@ -108,7 +110,6 @@ namespace Kato
 				NotifyOfPropertyChange(() => NewServerAuthRequired);
 			}
 		}
-
 
 		public ViewModeKind ViewMode
 		{
@@ -141,6 +142,19 @@ namespace Kato
 				if (value.Equals(m_isUpdateAvailable)) return;
 				m_isUpdateAvailable = value;
 				NotifyOfPropertyChange(() => IsUpdateAvailable);
+			}
+		}
+
+		public double UpdateTimerInterval
+		{
+			get { return m_updateTimerInterval; }
+			set
+			{
+				if (value.Equals(m_updateTimerInterval)) return;
+				m_updateTimerInterval = value;
+				NotifyOfPropertyChange(() => UpdateTimerInterval);
+
+				UpdateTimer(TimeSpan.FromSeconds(m_updateTimerInterval));
 			}
 		}
 
@@ -187,6 +201,26 @@ namespace Kato
 				ViewMode = kind;
 		}
 
+		public void SaveSettings()
+		{
+			if (m_servers.Any(x => !x.IsValid) || !HasInternetConnection)
+				return;
+
+			UserSettings settings = new UserSettings { Servers = new List<SavedJenkinsServers>() };
+			foreach (ServerViewModel server in Servers)
+			{
+				List<SavedJob> jobs = server.Jobs.Where(x => x.IsSubscribed).Select(x => new SavedJob { Name = x.Name }).ToList();
+				settings.Servers.Add(new SavedJenkinsServers { DomainUrl = server.DomainUrl, Jobs = jobs, RequiresAuthentication = server.RequiresAuthentication });
+			}
+
+			PersistedUserSettings.Save(settings);
+			Settings.Default.ViewMode = ViewMode.ToString();
+			Settings.Default.JobUpdateInterval = UpdateTimerInterval;
+			Settings.Default.Servers = new StringCollection();
+			Settings.Default.Servers.AddRange(Servers.Select(x => x.DomainUrl).ToArray());
+			Settings.Default.Save();
+		}
+
 		public void AddServer()
 		{
 			if (string.IsNullOrWhiteSpace(NewServerUrl))
@@ -206,7 +240,6 @@ namespace Kato
 			}
 		}
 
-
 		public void ClearSelection()
 		{
 			SetJobSubscriptions("c");
@@ -216,6 +249,10 @@ namespace Kato
 			SetJobSubscriptions("a");
 		}
 
+		private void UpdateTimer(TimeSpan interval)
+		{
+			m_timer.Interval = interval;
+		}
 
 		private void SetJobSubscriptions(string mode)
 		{
@@ -266,14 +303,16 @@ namespace Kato
 
 		private void Update()
 		{
+			if (!CheckForInternetConnection())
+				return;
+
 			if (!m_servers.Any())
 				return;
 
-			foreach (ServerViewModel server in m_servers)
-				server.Update();
+			Task.WaitAll(m_servers.Select(x => Task.Run(new System.Action(x.Update))).ToArray());
 
 			var subscribedJobs = m_servers.SelectMany(x => x.Jobs.Where(j => j.IsSubscribed)).ToList();
-			BuildStatus status = subscribedJobs.Any() ? subscribedJobs.Min(x => x.Status) : BuildStatus.Unknown;
+			BuildStatus status = subscribedJobs.Any() ? subscribedJobs.Where(x => x.Status > BuildStatus.Unknown).Min(x => x.Status) : BuildStatus.Unknown;
 
 			if (m_overallStatus != status)
 			{
@@ -313,24 +352,22 @@ namespace Kato
 
 		private void Initialize()
 		{
+			AutoDetectServers();
+
 			if (m_settings == null || m_settings.Servers == null || m_settings.Servers.Count == 0)
 			{
 				if (Settings.Default.Servers != null && Settings.Default.Servers.Count > 0)
 					AddServers(Settings.Default.Servers);
 				else
-					AddServers(new[] { "http://jenkins" });
-
-				AutoDetectServers();
+					AddServers(new[] { "https://jenkins" });
 			}
 			else
 			{
 				foreach (var server in m_settings.Servers)
-				{
 					AddServer(server.DomainUrl, server.RequiresAuthentication);
-				}
 			}
+
 			Update();
-			SaveSettings();
 		}
 
 		private void AutoDetectServers()
@@ -338,29 +375,62 @@ namespace Kato
 			// 33848
 			try
 			{
-				UdpClient client = new UdpClient(555);
-				client.AllowNatTraversal(true);
-				client.EnableBroadcast = true;
-				client.Connect(IPAddress.Parse("255.255.255.255"), 33848);
-				byte[] message = Encoding.ASCII.GetBytes("Hello");
-				client.Send(message, message.Length);
-				var response = client.ReceiveAsync();
-				response.ContinueWith(x =>
+				if (m_udpWorker == null)
 				{
-					if (!x.IsFaulted)
-					{
-						var temp = x.Result;
-						string data = Encoding.UTF8.GetString(temp.Buffer);
-						var xml = XElement.Parse(data);
-						var urlElement = xml.Elements("url").FirstOrDefault();
-						AddServers(new[] { (string) urlElement });
-					}
-				}, TaskScheduler.FromCurrentSynchronizationContext());
-
+					m_udpWorker = new BackgroundWorker();
+					m_udpWorker.DoWork += Worker_DoWork;
+					m_udpWorker.ProgressChanged += Worker_ProgressChanged;
+					m_udpWorker.RunWorkerAsync();
+				}
+				SendUDPMessage();
 			}
 			catch (Exception e)
 			{
 				s_logger.Error(e.Message, e);
+			}
+		}
+
+		private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+		{
+			var xml = XElement.Parse((string) e.UserState);
+			var urlElement = xml.Elements("url").FirstOrDefault();
+			AddServers(new[] { (string) urlElement });
+		}
+
+		private void Worker_DoWork(object sender, DoWorkEventArgs e)
+		{
+			ListenForAutoDiscovery();
+		}
+
+		private void ListenForAutoDiscovery()
+		{
+			var address = IPAddress.Parse("239.77.124.213");
+			using (UdpClient client = new UdpClient(AddressFamily.InterNetwork))
+			{
+				client.AllowNatTraversal(true);
+				client.JoinMulticastGroup(address, 50);
+
+				while (true)
+				{
+					var endPoint = new IPEndPoint(IPAddress.Any, 0);
+					var response = client.Receive(ref endPoint);
+					string data = Encoding.UTF8.GetString(response);
+					s_logger.Info("UDP response received: " + data);
+					m_udpWorker.ReportProgress(0, data);
+				}
+			}
+		}
+
+		private async void SendUDPMessage()
+		{
+			byte[] message = Encoding.ASCII.GetBytes("Hello");
+			var address = IPAddress.Parse("239.77.124.213");
+			using (UdpClient client = new UdpClient())
+			{
+				client.AllowNatTraversal(true);
+				client.JoinMulticastGroup(address);
+				await client.SendAsync(message, message.Length, new IPEndPoint(address, 33848)).ConfigureAwait(false);
+				client.Close();
 			}
 		}
 
@@ -387,9 +457,9 @@ namespace Kato
 			}
 
 			ServerViewModel serverViewModel;
+			JenkinsClient client = new JenkinsClient(new Uri(serverUri, UriKind.Absolute), userCreds);
 			try
 			{
-				JenkinsClient client = new JenkinsClient(new Uri(serverUri, UriKind.Absolute), userCreds);
 				Server server = client.GetJson<Server>(new Uri(serverUri));
 				server.RequiresAuthentication = authRequired;
 
@@ -397,7 +467,7 @@ namespace Kato
 			}
 			catch (Exception)
 			{
-				return false;
+				serverViewModel = new ServerViewModel(client, null);
 			}
 
 			SavedJenkinsServers savedServer = m_settings.Servers.FirstOrDefault(x => x.DomainUrl == serverViewModel.DomainUrl);
@@ -410,7 +480,6 @@ namespace Kato
 			}
 
 			m_servers.Add(serverViewModel);
-
 			return true;
 		}
 
@@ -441,18 +510,6 @@ namespace Kato
 				m_taskbarItemInfo.Overlay = TaskbarHelper.GetNewMessagesNotificationOverlay(Application.Current.MainWindow,
 					GetOverlayIcon(BuildStatus.Failed), failedbuilds);
 			}
-			else if (jobs.Any(x => x.Status == BuildStatus.Unknown))
-			{
-				m_taskbarItemInfo.Description = "";
-				m_taskbarItemInfo.Overlay = TaskbarHelper.GetNewMessagesNotificationOverlay(Application.Current.MainWindow,
-					GetOverlayIcon(BuildStatus.Unknown));
-			}
-			else if (jobs.Any(x => x.Status == BuildStatus.Disabled))
-			{
-				m_taskbarItemInfo.Description = "One or more builds are disabled";
-				m_taskbarItemInfo.Overlay = TaskbarHelper.GetNewMessagesNotificationOverlay(Application.Current.MainWindow,
-					GetOverlayIcon(BuildStatus.Disabled));
-			}
 			else if (jobs.Any(x => x.Status == BuildStatus.FailedAndBuilding))
 			{
 				m_taskbarItemInfo.Description = "";
@@ -465,7 +522,19 @@ namespace Kato
 				m_taskbarItemInfo.Overlay = TaskbarHelper.GetNewMessagesNotificationOverlay(Application.Current.MainWindow,
 					GetOverlayIcon(BuildStatus.SuccessAndBuilding));
 			}
-			else if (jobs.All(x => x.Status == BuildStatus.Success))
+			else if (jobs.All(x => x.Status == BuildStatus.Disabled))
+			{
+				m_taskbarItemInfo.Description = "One or more builds are disabled";
+				m_taskbarItemInfo.Overlay = TaskbarHelper.GetNewMessagesNotificationOverlay(Application.Current.MainWindow,
+					GetOverlayIcon(BuildStatus.Disabled));
+			}
+			else if (jobs.All(x => x.Status == BuildStatus.Unknown))
+			{
+				m_taskbarItemInfo.Description = "";
+				m_taskbarItemInfo.Overlay = TaskbarHelper.GetNewMessagesNotificationOverlay(Application.Current.MainWindow,
+					GetOverlayIcon(BuildStatus.Unknown));
+			}
+			else if (jobs.Any(x => x.Status == BuildStatus.Success))
 			{
 				m_taskbarItemInfo.Description = "";
 				m_taskbarItemInfo.Overlay = TaskbarHelper.GetNewMessagesNotificationOverlay(Application.Current.MainWindow,
@@ -517,7 +586,6 @@ namespace Kato
 			if (!creds.IsValid)
 				return false;
 
-
 			try
 			{
 				var apiUri = JenkinsApiHelper.GetApiRoute(new Uri(serverUrl, UriKind.Absolute));
@@ -529,27 +597,48 @@ namespace Kato
 				s_logger.Error(e.Message, e);
 				return false;
 			}
-
 		}
 
+		public bool CheckForInternetConnection()
+		{
+			try
+			{
+				using (var client = new WebClient())
+				{
+					using (client.OpenRead("https://google.com"))
+					{
+						HasInternetConnection = true;
+					}
+				}
+			}
+			catch
+			{
+				HasInternetConnection = false;
+			}
 
-		private const int c_projectUpdateInterval = 10;
+			return HasInternetConnection;
+		}
+
+		const int c_projectUpdateInterval = 10;
 		DispatcherTimer m_updateTimer;
+		bool m_hasInternetConnection;
 		static readonly log4net.ILog s_logger = log4net.LogManager.GetLogger("AppModel");
 		readonly ObservableCollection<ServerViewModel> m_servers;
 		readonly UserSettings m_settings;
 		readonly DispatcherTimer m_timer;
 		readonly TaskbarIcon m_notifyIcon;
 		readonly AutoUpdater m_updateManager;
-		private readonly TaskbarItemInfo m_taskbarItemInfo;
+		readonly TaskbarItemInfo m_taskbarItemInfo;
 		string m_subscribeFilter;
 		BuildStatus m_overallStatus;
 		string m_newServerUrl;
 		bool m_newServerAuthRequired;
-		private bool m_isAddServerUrlValid;
-		private ViewModeKind m_viewMode;
-		private bool m_isUpdateAvailable;
-		private JobViewModel m_selectedProject;
+		bool m_isAddServerUrlValid;
+		ViewModeKind m_viewMode;
+		bool m_isUpdateAvailable;
+		JobViewModel m_selectedProject;
 		ObservableCollection<JobViewModel> m_subscribedJobs;
+		BackgroundWorker m_udpWorker;
+		double m_updateTimerInterval;
 	}
 }

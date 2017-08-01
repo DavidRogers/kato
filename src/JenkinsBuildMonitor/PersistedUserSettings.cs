@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using log4net;
 using Newtonsoft.Json;
 
 namespace Kato
@@ -28,11 +29,9 @@ namespace Kato
 			{
 				s_logger.Info("Saving user settings");
 
-                		if (!Directory.Exists(s_savedFilePathBase))
-                		{
-                    			Directory.CreateDirectory(s_savedFilePathBase);
-                		}
-                		
+				if (!Directory.Exists(s_savedFilePathBase))
+					Directory.CreateDirectory(s_savedFilePathBase);
+
 				File.WriteAllText(filePath, serializedData, Encoding.UTF8);
 			}
 			catch (Exception e)
@@ -41,7 +40,7 @@ namespace Kato
 			}
 		}
 
-		static readonly log4net.ILog s_logger = log4net.LogManager.GetLogger("PersistedUserSettings");
+		static readonly ILog s_logger = LogManager.GetLogger("PersistedUserSettings");
 		static readonly string s_savedFilePathBase = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), App.AppName);
 	}
 }
