@@ -312,7 +312,7 @@ namespace Kato
 			Task.WaitAll(m_servers.Select(x => Task.Run(new System.Action(x.Update))).ToArray());
 
 			var subscribedJobs = m_servers.SelectMany(x => x.Jobs.Where(j => j.IsSubscribed)).ToList();
-			BuildStatus status = subscribedJobs.Any() ? subscribedJobs.Where(x => x.Status > BuildStatus.Unknown).Min(x => x.Status) : BuildStatus.Unknown;
+			BuildStatus status = subscribedJobs.Any() ? subscribedJobs.Where(x => x.Status > BuildStatus.Aborted).Min(x => x.Status) : BuildStatus.Unknown;
 
 			if (m_overallStatus != status)
 			{
