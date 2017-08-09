@@ -639,7 +639,7 @@ namespace Kato
 			return HasInternetConnection;
 		}
 
-		const int c_projectUpdateInterval = 10;
+		const int c_projectUpdateInterval = 60;
 		DispatcherTimer m_updateTimer;
 		bool m_hasInternetConnection;
 		static readonly log4net.ILog s_logger = log4net.LogManager.GetLogger("AppModel");
