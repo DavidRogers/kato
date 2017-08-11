@@ -1,9 +1,7 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
-using log4net;
 
 namespace Kato
 {
@@ -88,7 +86,8 @@ namespace Kato
 
 			private void AddText(string text)
 			{
-				((Paragraph) m_viewer.Document.Blocks.FirstBlock).Inlines.Add(text);
+				Inline inline = new Run(text);
+				((Paragraph) m_viewer.Document.Blocks.FirstBlock).Inlines.Add(inline);
 
 				ScrollToLatestContent();
 			}
