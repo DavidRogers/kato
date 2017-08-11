@@ -50,8 +50,7 @@ namespace Kato
 				m_updateTimer = new DispatcherTimer(TimeSpan.FromHours(4), DispatcherPriority.Background, CheckForUpdate, Dispatcher.CurrentDispatcher);
 			}
 
-			if (CheckForInternetConnection())
-				Initialize();
+			CheckForInternetConnection();
 		}
 
 		public ObservableCollection<ServerViewModel> Servers { get { return m_servers; } }
