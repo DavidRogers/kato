@@ -23,6 +23,7 @@ using Hardcodet.Wpf.TaskbarNotification;
 using JenkinsApiClient;
 using Kato.Properties;
 using SecureCredentialsLibrary;
+using Action = System.Action;
 
 namespace Kato
 {
@@ -37,7 +38,7 @@ namespace Kato
 			m_taskbarItemInfo = taskbarItemInfo;
 			m_servers = new ObservableCollection<ServerViewModel>();
 			m_settings = PersistedUserSettings.Open<UserSettings>() ?? new UserSettings { Servers = new List<SavedJenkinsServers>() };
-			m_updateTimerInterval = m_settings.UpdateInterval ?? c_projectUpdateInterval;
+			m_updateTimerInterval = Settings.Default.JobUpdateInterval < c_minJobUpdateInterval ? c_projectUpdateInterval : Settings.Default.JobUpdateInterval;
 			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(m_updateTimerInterval), DispatcherPriority.Background, (sender, args) => Update(), Dispatcher.CurrentDispatcher);
 			Status = new StatusViewModel();
 			m_subscribedJobs = new ObservableCollection<JobViewModel>();
@@ -301,7 +302,7 @@ namespace Kato
 				job.IsHidden = !string.IsNullOrWhiteSpace(m_subscribeFilter) && !job.Name.ToLower().Contains(m_subscribeFilter.ToLower());
 		}
 
-		private void Update()
+		private async void Update()
 		{
 			if (!CheckForInternetConnection())
 				return;
@@ -309,7 +310,7 @@ namespace Kato
 			if (!m_servers.Any())
 				return;
 
-			Task.WaitAll(m_servers.Select(x => Task.Run(new System.Action(x.Update))).ToArray());
+			await Task.WhenAll(m_servers.Select(x => Task.Run(new Action(x.Update))).ToArray()).ConfigureAwait(true);
 
 			var subscribedJobs = m_servers.SelectMany(x => x.Jobs.Where(j => j.IsSubscribed)).ToList();
 			BuildStatus status = subscribedJobs.Any() ? subscribedJobs.Where(x => x.Status > BuildStatus.Aborted).Min(x => x.Status) : BuildStatus.Unknown;
@@ -322,7 +323,7 @@ namespace Kato
 			}
 
 			SubscribedJobs = new ObservableCollection<JobViewModel>(subscribedJobs);
-			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new System.Action(SetTaskBarStatus));
+			await Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(SetTaskBarStatus));
 		}
 
 		private string GetIconName(BuildStatus status)
@@ -619,7 +620,8 @@ namespace Kato
 			return HasInternetConnection;
 		}
 
-		const int c_projectUpdateInterval = 10;
+		const double c_projectUpdateInterval = 10;
+		const int c_minJobUpdateInterval = 3;
 		DispatcherTimer m_updateTimer;
 		bool m_hasInternetConnection;
 		static readonly log4net.ILog s_logger = log4net.LogManager.GetLogger("AppModel");
