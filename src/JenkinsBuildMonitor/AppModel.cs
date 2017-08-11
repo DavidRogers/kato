@@ -322,7 +322,8 @@ namespace Kato
 				m_overallStatus = status;
 			}
 
-			SubscribedJobs = new ObservableCollection<JobViewModel>(subscribedJobs);
+			subscribedJobs.Except(SubscribedJobs).ToList().ForEach(SubscribedJobs.Add);
+
 			await Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(SetTaskBarStatus));
 		}
 
