@@ -8,6 +8,7 @@ using System.Deployment.Application;
 using System.Drawing;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,8 +50,7 @@ namespace Kato
 				m_updateManager.PropertyChanged += UpdateManager_PropertyChanged;
 				m_updateTimer = new DispatcherTimer(TimeSpan.FromHours(4), DispatcherPriority.Background, CheckForUpdate, Dispatcher.CurrentDispatcher);
 			}
-
-			CheckForInternetConnection();
+			Initialize();
 		}
 
 		public ObservableCollection<ServerViewModel> Servers { get { return m_servers; } }
@@ -249,6 +249,26 @@ namespace Kato
 			SetJobSubscriptions("a");
 		}
 
+		public async void CheckForInternetConnection()
+		{
+			await CheckForInternetConnectionAsync().ConfigureAwait(true);
+		}
+
+		public async Task<bool> CheckForInternetConnectionAsync()
+		{
+			try
+			{
+				using (await m_webClient.GetAsync("/", HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(true))
+					HasInternetConnection = true;
+			}
+			catch
+			{
+				HasInternetConnection = false;
+			}
+
+			return HasInternetConnection;
+		}
+
 		private void UpdateTimer(TimeSpan interval)
 		{
 			m_timer.Interval = interval;
@@ -303,7 +323,7 @@ namespace Kato
 
 		private async void Update()
 		{
-			if (!CheckForInternetConnection())
+			if (!await CheckForInternetConnectionAsync().ConfigureAwait(true))
 				return;
 
 			if (!m_servers.Any())
@@ -600,28 +620,9 @@ namespace Kato
 			}
 		}
 
-		public bool CheckForInternetConnection()
-		{
-			try
-			{
-				using (var client = new WebClient())
-				{
-					using (client.OpenRead("https://google.com"))
-					{
-						HasInternetConnection = true;
-					}
-				}
-			}
-			catch
-			{
-				HasInternetConnection = false;
-			}
-
-			return HasInternetConnection;
-		}
-
 		const double c_projectUpdateInterval = 10;
 		const int c_minJobUpdateInterval = 3;
+		readonly HttpClient m_webClient = new HttpClient { BaseAddress = new Uri("https://www.google.com"), Timeout = TimeSpan.FromSeconds(10) };
 		DispatcherTimer m_updateTimer;
 		bool m_hasInternetConnection;
 		static readonly log4net.ILog s_logger = log4net.LogManager.GetLogger("AppModel");
