@@ -38,8 +38,8 @@ namespace Kato
 			m_servers = new ObservableCollection<ServerViewModel>();
 			m_settings = PersistedUserSettings.Open<UserSettings>() ?? new UserSettings { Servers = new List<SavedJenkinsServers>() };
 			m_updateTimerInterval = m_settings.UpdateInterval ?? c_projectUpdateInterval;
-			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(m_updateTimerInterval), DispatcherPriority.Background, (sender, args) => { new Task(Update).Start(); }, Dispatcher.CurrentDispatcher);
-			Status = new StatusViewModel();
+            m_timer = new DispatcherTimer(TimeSpan.FromSeconds(m_updateTimerInterval), DispatcherPriority.Background, (sender, args) => Update(), Dispatcher.CurrentDispatcher);
+            Status = new StatusViewModel();
 			m_subscribedJobs = new ObservableCollection<JobViewModel>();
 
 			if (ApplicationDeployment.IsNetworkDeployed)
@@ -387,7 +387,7 @@ namespace Kato
 					AddServer(server.DomainUrl, server.RequiresAuthentication);
 			}
 
-			new Task(Update).Start();
+		    Update();
 		}
 
 		private void AutoDetectServers()
