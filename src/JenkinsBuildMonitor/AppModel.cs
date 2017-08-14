@@ -258,8 +258,12 @@ namespace Kato
 		{
 			try
 			{
-				using (await m_webClient.GetAsync("/", HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(true))
-					HasInternetConnection = true;
+				var server = m_servers.FirstOrDefault();
+				if (server != null)
+				{
+					using (await m_webClient.GetAsync(server.DomainUrl, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(true))
+						HasInternetConnection = true;
+				}
 			}
 			catch
 			{
@@ -622,7 +626,7 @@ namespace Kato
 
 		const double c_projectUpdateInterval = 10;
 		const int c_minJobUpdateInterval = 3;
-		readonly HttpClient m_webClient = new HttpClient { BaseAddress = new Uri("https://www.google.com"), Timeout = TimeSpan.FromSeconds(10) };
+		readonly HttpClient m_webClient = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
 		DispatcherTimer m_updateTimer;
 		bool m_hasInternetConnection;
 		static readonly log4net.ILog s_logger = log4net.LogManager.GetLogger("AppModel");
