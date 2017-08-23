@@ -3,6 +3,7 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:cal="http://www.caliburnproject.org"
 	xmlns:kato="clr-namespace:Kato"
+    xmlns:fa="http://schemas.fontawesome.io/icons/"
 	xmlns:src="clr-namespace:Kato.Resources">
 
 	<DockPanel>
@@ -40,8 +41,8 @@
 			</StackPanel>
 		</Grid>
 		<Label Visibility="{Binding HasInternetConnection, Converter={x:Static src:Converters.ReverseBoolToVisibilityConverter}}" Padding="4" Background="LightYellow" DockPanel.Dock="Bottom">Unable to connect to server.</Label>
-		<Label Visibility="{Binding IsUpdateAvailable, Converter={x:Static src:Converters.BoolToVisibilityConverter}}" Padding="4" Background="LightBlue" DockPanel.Dock="Bottom">An update has been installed, please restart to see the latest changes.</Label>
-		<Grid DockPanel.Dock="Bottom">
+        <Label Visibility="{Binding IsUpdateAvailable, Converter={x:Static src:Converters.BoolToVisibilityConverter}}" Padding="4" Background="LightBlue" DockPanel.Dock="Bottom">An update has been installed, please restart to see the latest changes.</Label>
+        <Grid DockPanel.Dock="Bottom">
 			<ScrollViewer VerticalScrollBarVisibility="Auto">
 				<ContentControl x:Name="ServerItems" Content="{Binding}">
 					<ContentControl.Style>
@@ -64,6 +65,40 @@
 					</ContentControl.Style>
 				</ContentControl>
 			</ScrollViewer>
-		</Grid>
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                <fa:FontAwesome Icon="Spinner" Name="Spinner" FontSize="40" RenderTransformOrigin="0.5, 0.5" Visibility="{Binding IsUpdatingJobs, Converter={x:Static src:Converters.BoolToVisibilityConverter}}" Foreground="LightGray">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsUpdatingJobs}" Value="True">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard Name="SpinnerStoryboard">
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                    Storyboard.TargetProperty="(TextBlock.RenderTransform).(RotateTransform.Angle)"
+                                                    From="0"
+                                                    To="360"
+                                                    Duration="0:0:2"
+                                                    RepeatBehavior="Forever">   
+                                                </DoubleAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsUpdatingJobs}" Value="False">
+                                    <DataTrigger.EnterActions>
+                                        <StopStoryboard BeginStoryboardName="SpinnerStoryboard"></StopStoryboard>
+                                    </DataTrigger.EnterActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                    <TextBlock.RenderTransform>
+                        <RotateTransform Angle="0" />
+                    </TextBlock.RenderTransform>
+                </fa:FontAwesome>
+            </Grid>
+        </Grid>
 	</DockPanel>
 </Page>
+

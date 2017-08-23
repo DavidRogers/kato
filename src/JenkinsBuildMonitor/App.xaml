@@ -13,8 +13,8 @@
 				<ResourceDictionary Source="/Resources/Commands.xaml" />
 				<ResourceDictionary Source="/Resources/Icons.xaml" />
 				<ResourceDictionary Source="/Templates/ServerViewModelTemplate.xaml" />
-				<ResourceDictionary Source="/Templates/TrayPopupTemplates.xaml" />
-			</ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Templates/TrayPopupTemplates.xaml" />
+            </ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>
 </Application>
