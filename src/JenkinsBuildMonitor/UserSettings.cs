@@ -5,7 +5,6 @@ namespace Kato
 	public sealed class UserSettings
 	{
 		public List<SavedJenkinsServers> Servers { get; set; }
-		public double? UpdateInterval { get; set; }
 	}
 
 	public class SavedJenkinsServers

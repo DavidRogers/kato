@@ -8,6 +8,7 @@ using System.Deployment.Application;
 using System.Drawing;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ using Hardcodet.Wpf.TaskbarNotification;
 using JenkinsApiClient;
 using Kato.Properties;
 using SecureCredentialsLibrary;
+using Action = System.Action;
 
 namespace Kato
 {
@@ -37,7 +39,7 @@ namespace Kato
 			m_taskbarItemInfo = taskbarItemInfo;
 			m_servers = new ObservableCollection<ServerViewModel>();
 			m_settings = PersistedUserSettings.Open<UserSettings>() ?? new UserSettings { Servers = new List<SavedJenkinsServers>() };
-			m_updateTimerInterval = m_settings.UpdateInterval ?? c_projectUpdateInterval;
+			m_updateTimerInterval = Settings.Default.JobUpdateInterval < c_minJobUpdateInterval ? c_projectUpdateInterval : Settings.Default.JobUpdateInterval;
             m_timer = new DispatcherTimer(TimeSpan.FromSeconds(m_updateTimerInterval), DispatcherPriority.Background, (sender, args) => Update(), Dispatcher.CurrentDispatcher);
             Status = new StatusViewModel();
 			m_subscribedJobs = new ObservableCollection<JobViewModel>();
@@ -48,8 +50,6 @@ namespace Kato
 				m_updateManager.PropertyChanged += UpdateManager_PropertyChanged;
 				m_updateTimer = new DispatcherTimer(TimeSpan.FromHours(4), DispatcherPriority.Background, CheckForUpdate, Dispatcher.CurrentDispatcher);
 			}
-
-			if (CheckForInternetConnection())
 				Initialize();
 		}
 
@@ -264,6 +264,30 @@ namespace Kato
 			SetJobSubscriptions("a");
 		}
 
+		public async void CheckForInternetConnection()
+		{
+			await CheckForInternetConnectionAsync().ConfigureAwait(true);
+		}
+
+		public async Task<bool> CheckForInternetConnectionAsync()
+		{
+			try
+			{
+				var server = m_servers.FirstOrDefault();
+				if (server != null)
+				{
+					using (await m_webClient.GetAsync(server.DomainUrl, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(true))
+						HasInternetConnection = true;
+				}
+			}
+			catch
+			{
+				HasInternetConnection = false;
+			}
+
+			return HasInternetConnection;
+		}
+
 		private void UpdateTimer(TimeSpan interval)
 		{
 			m_timer.Interval = interval;
@@ -316,17 +340,17 @@ namespace Kato
 				job.IsHidden = !string.IsNullOrWhiteSpace(m_subscribeFilter) && !job.Name.ToLower().Contains(m_subscribeFilter.ToLower());
 		}
 
-		private void Update()
+		private async void Update()
 		{
-		    IsUpdatingJobs = true;
-
-			if (!CheckForInternetConnection())
+			if (!await CheckForInternetConnectionAsync().ConfigureAwait(true))
 				return;
 
             if (!m_servers.Any())
 				return;
 
-			Task.WaitAll(m_servers.Select(x => Task.Run(new System.Action(x.Update))).ToArray());
+			IsUpdatingJobs = true;
+
+			await Task.WhenAll(m_servers.Select(x => Task.Run(new Action(x.Update))).ToArray()).ConfigureAwait(true);
 
             var subscribedJobs = m_servers.SelectMany(x => x.Jobs.Where(j => j.IsSubscribed)).ToList();
 			BuildStatus status = subscribedJobs.Any() ? subscribedJobs.Where(x => x.Status > BuildStatus.Aborted).Min(x => x.Status) : BuildStatus.Unknown;
@@ -338,9 +362,9 @@ namespace Kato
 				m_overallStatus = status;
 			}
 
-			SubscribedJobs = new ObservableCollection<JobViewModel>(subscribedJobs);
+			subscribedJobs.Except(SubscribedJobs).ToList().ForEach(SubscribedJobs.Add);
 
-            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new System.Action(SetTaskBarStatus));
+			await Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(SetTaskBarStatus));
 
             IsUpdatingJobs = false;
         }
@@ -619,27 +643,9 @@ namespace Kato
 			}
 		}
 
-		public bool CheckForInternetConnection()
-		{
-			try
-			{
-				using (var client = new WebClient())
-				{
-					using (client.OpenRead("https://google.com"))
-					{
-						HasInternetConnection = true;
-					}
-				}
-			}
-			catch
-			{
-				HasInternetConnection = false;
-			}
-
-			return HasInternetConnection;
-		}
-
-		const int c_projectUpdateInterval = 60;
+		const double c_projectUpdateInterval = 60;
+		const int c_minJobUpdateInterval = 3;
+		readonly HttpClient m_webClient = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
 		DispatcherTimer m_updateTimer;
 		bool m_hasInternetConnection;
 		static readonly log4net.ILog s_logger = log4net.LogManager.GetLogger("AppModel");

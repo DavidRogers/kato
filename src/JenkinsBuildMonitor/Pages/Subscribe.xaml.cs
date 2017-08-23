@@ -19,7 +19,7 @@ namespace Kato.Pages
 
 		private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
 		{
-			AppModel model = (AppModel)((Page)sender).DataContext;
+			AppModel model = (AppModel) ((Page) sender).DataContext;
 			if (model.Servers != null && model.Servers.Any())
 			{
 				FilterBox.Focus();
@@ -48,7 +48,7 @@ namespace Kato.Pages
 		{
 			try
 			{
-				((MainWindow)Application.Current.MainWindow).Model.SaveSettings();
+				((MainWindow) Application.Current.MainWindow).Model.SaveSettings();
 			}
 			catch
 			{
@@ -62,6 +62,5 @@ namespace Kato.Pages
 		public void OnNavigatingFrom(NavigatingCancelEventArgs e)
 		{
 		}
-
 	}
 }
