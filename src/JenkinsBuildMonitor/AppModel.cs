@@ -33,15 +33,15 @@ namespace Kato
 		public AppModel(TaskbarIcon notifyIcon, TaskbarItemInfo taskbarItemInfo)
 		{
 			m_isAddServerUrlValid = true;
-            m_updateManager = new AutoUpdater();
+			m_updateManager = new AutoUpdater();
 			m_notifyIcon = notifyIcon;
 			Enum.TryParse(Settings.Default.ViewMode, true, out m_viewMode);
 			m_taskbarItemInfo = taskbarItemInfo;
 			m_servers = new ObservableCollection<ServerViewModel>();
 			m_settings = PersistedUserSettings.Open<UserSettings>() ?? new UserSettings { Servers = new List<SavedJenkinsServers>() };
 			m_updateTimerInterval = Settings.Default.JobUpdateInterval < c_minJobUpdateInterval ? c_projectUpdateInterval : Settings.Default.JobUpdateInterval;
-            m_timer = new DispatcherTimer(TimeSpan.FromSeconds(m_updateTimerInterval), DispatcherPriority.Background, (sender, args) => Update(), Dispatcher.CurrentDispatcher);
-            Status = new StatusViewModel();
+			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(m_updateTimerInterval), DispatcherPriority.Background, (sender, args) => Update(), Dispatcher.CurrentDispatcher);
+			Status = new StatusViewModel();
 			m_subscribedJobs = new ObservableCollection<JobViewModel>();
 
 			if (ApplicationDeployment.IsNetworkDeployed)
@@ -50,7 +50,7 @@ namespace Kato
 				m_updateManager.PropertyChanged += UpdateManager_PropertyChanged;
 				m_updateTimer = new DispatcherTimer(TimeSpan.FromHours(4), DispatcherPriority.Background, CheckForUpdate, Dispatcher.CurrentDispatcher);
 			}
-				Initialize();
+			Initialize();
 		}
 
 		public ObservableCollection<ServerViewModel> Servers { get { return m_servers; } }
@@ -145,22 +145,22 @@ namespace Kato
 			}
 		}
 
-	    public bool IsUpdatingJobs
-	    {
-	        get
-	        {
-	            return m_isUpdatingJobs;
-	        }
-	        set
-	        {
-	            if (value.Equals(m_isUpdatingJobs)) return;
-	            m_isUpdatingJobs = value;
-                NotifyOfPropertyChange(() => IsUpdatingJobs);
-	        }
-	    }
+		public bool IsUpdatingJobs
+		{
+			get
+			{
+				return m_isUpdatingJobs;
+			}
+			set
+			{
+				if (value.Equals(m_isUpdatingJobs)) return;
+				m_isUpdatingJobs = value;
+				NotifyOfPropertyChange(() => IsUpdatingJobs);
+			}
+		}
 
 
-        public double UpdateTimerInterval
+		public double UpdateTimerInterval
 		{
 			get { return m_updateTimerInterval; }
 			set
@@ -345,14 +345,14 @@ namespace Kato
 			if (!await CheckForInternetConnectionAsync().ConfigureAwait(true))
 				return;
 
-            if (!m_servers.Any())
+			if (!m_servers.Any())
 				return;
 
 			IsUpdatingJobs = true;
 
 			await Task.WhenAll(m_servers.Select(x => Task.Run(new Action(x.Update))).ToArray()).ConfigureAwait(true);
 
-            var subscribedJobs = m_servers.SelectMany(x => x.Jobs.Where(j => j.IsSubscribed)).ToList();
+			var subscribedJobs = m_servers.SelectMany(x => x.Jobs.Where(j => j.IsSubscribed)).ToList();
 			BuildStatus status = subscribedJobs.Any() ? subscribedJobs.Where(x => x.Status > BuildStatus.Aborted).Min(x => x.Status) : BuildStatus.Unknown;
 
 			if (m_overallStatus != status)
@@ -366,8 +366,8 @@ namespace Kato
 
 			await Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(SetTaskBarStatus));
 
-            IsUpdatingJobs = false;
-        }
+			IsUpdatingJobs = false;
+		}
 
 		private string GetIconName(BuildStatus status)
 		{
@@ -411,7 +411,7 @@ namespace Kato
 					AddServer(server.DomainUrl, server.RequiresAuthentication);
 			}
 
-		    Update();
+			Update();
 		}
 
 		private void AutoDetectServers()
@@ -666,6 +666,6 @@ namespace Kato
 		ObservableCollection<JobViewModel> m_subscribedJobs;
 		BackgroundWorker m_udpWorker;
 		double m_updateTimerInterval;
-	    bool m_isUpdatingJobs;
+		bool m_isUpdatingJobs;
 	}
 }
