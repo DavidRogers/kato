@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
@@ -7,7 +8,7 @@ using JenkinsApiClient;
 
 namespace Kato
 {
-	public sealed class JobViewModel : PropertyChangedBase
+	public sealed class JobViewModel : PropertyChangedBase, IEqualityComparer<JobViewModel>
 	{
 		public JobViewModel(string name, Uri path, JenkinsClient client)
 		{
@@ -227,8 +228,17 @@ namespace Kato
 
 		private void RaiseStatusChangedEvent(BuildStatus oldValue, BuildStatus newValue)
 		{
-			if (StatusChanged != null)
-				StatusChanged(this, new StatusChangedArgs(oldValue, newValue));
+			StatusChanged?.Invoke(this, new StatusChangedArgs(oldValue, newValue));
+		}
+
+		public bool Equals(JobViewModel x, JobViewModel y)
+		{
+			return x?.Name + (x?.Path?.OriginalString ?? "") == y?.Name + (y?.Path?.OriginalString ?? "");
+		}
+
+		public int GetHashCode(JobViewModel obj)
+		{
+			return obj.Name.GetHashCode() + obj.Path.GetHashCode();
 		}
 
 		public event StatusChangedEvent StatusChanged;
@@ -256,7 +266,7 @@ namespace Kato
 			NewValue = newValue;
 		}
 
-		public BuildStatus OldValue { get; private set; }
-		public BuildStatus NewValue { get; private set; }
+		public BuildStatus OldValue { get; }
+		public BuildStatus NewValue { get; }
 	}
 }

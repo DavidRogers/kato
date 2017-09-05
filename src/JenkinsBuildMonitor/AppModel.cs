@@ -362,7 +362,12 @@ namespace Kato
 				m_overallStatus = status;
 			}
 
-			subscribedJobs.Except(SubscribedJobs).ToList().ForEach(SubscribedJobs.Add);
+			foreach (var duplicate in SubscribedJobs.Except(subscribedJobs).Where(x => subscribedJobs.Any(y => y.Name == x.Name)).ToList())
+				SubscribedJobs.Remove(duplicate);
+
+			foreach (var job in subscribedJobs.Except(SubscribedJobs))
+				SubscribedJobs.Add(job);
+
 
 			await Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(SetTaskBarStatus));
 
@@ -643,7 +648,7 @@ namespace Kato
 			}
 		}
 
-		const double c_projectUpdateInterval = 60;
+		const double c_projectUpdateInterval = 15;
 		const int c_minJobUpdateInterval = 3;
 		readonly HttpClient m_webClient = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
 		DispatcherTimer m_updateTimer;
