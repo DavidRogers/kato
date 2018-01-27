@@ -11,7 +11,8 @@ You can download and install Kato at http://fieryjoy.com/kato
 ![alt tag](https://raw.githubusercontent.com/aliozgur/kato/master/media/Settings_02.png)
 
 ## Dashboard Grid
-The dashboard grid view displays jobs in a grid type of way. Each job is represented by a card and displays data such as name, status, build number, duration and when it was last built.
+The dashboard grid view displays jobs in a grid type of way. Each job is represented by a card which displays data such as name, status, build number, duration and when it was last built.
+
 ![alt tag](https://raw.githubusercontent.com/aliozgur/kato/master/media/dashbaord_00.png)
 
 ## Dashboard List
