@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -37,21 +36,12 @@ namespace JenkinsApiClient
 
 		}
 
-		private static bool CachedCreds_Contains(string baseAddress)
-		{
-			if (String.IsNullOrWhiteSpace(baseAddress))
-				return false;
-
-			var lowerAddress = baseAddress.ToLower();
-			return _cachedCredentials.ContainsKey(lowerAddress);
-		}
-
 		private static UserCredentials EnsureCredentials(string baseAddress, UserCredentials credentials)
 		{
 			if (credentials != null)
 				CachedCreds_Set(baseAddress, credentials);
 
-			return credentials != null ? credentials : CachedCreds_TryGet(baseAddress);
+			return credentials ?? CachedCreds_TryGet(baseAddress);
 		}
 		#endregion
 

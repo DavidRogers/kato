@@ -21,15 +21,15 @@
 						<ColumnDefinition Width="Auto"></ColumnDefinition>
 						<ColumnDefinition Width="Auto"></ColumnDefinition>
 					</Grid.ColumnDefinitions>
-					<Border  x:Name="AddServerBorder"
-                             Width="0"
-                             Grid.Column="0"
-                             BorderBrush="{Binding IsAddServerUrlValid, Converter={x:Static resources:Converters.IsValidToBrush}}" 
-                             BorderThickness="1">
+					<Border x:Name="AddServerBorder"
+							 Width="0"
+							 Grid.Column="0"
+							 BorderBrush="{Binding IsAddServerUrlValid, Converter={x:Static resources:Converters.IsValidToBrush}}" 
+							 BorderThickness="1">
 						<TextBox x:Name="AddServerBox" 
-                                             Padding="4 2"
-                                             cal:Message.Attach="[Event KeyUp]=[Action AddServerEnter($executionContext)]"
-                                             Text="{Binding NewServerUrl, UpdateSourceTrigger=PropertyChanged}">
+								Padding="4 2"
+								cal:Message.Attach="[Event KeyUp]=[Action AddServerEnter($executionContext)]"
+								Text="{Binding NewServerUrl, UpdateSourceTrigger=PropertyChanged}">
 							<resources:WatermarkService.Watermark>
 								<TextBlock Margin="5,3,0,0">http://jenkins.yourdomain.com</TextBlock>
 							</resources:WatermarkService.Watermark>
@@ -41,9 +41,9 @@
 				</Grid>
 
 				<Button Margin="4,0,0,0" Padding="4 2" x:Name="AddServerButton"
-				cal:Message.Attach="AddServer"
-				ToolTip="Click here to add a new Jenkins server"
-				Click="AddServerButton_Click">add server</Button>
+						cal:Message.Attach="AddServer"
+						ToolTip="Click here to add a new Jenkins server"
+						Click="AddServerButton_Click">add server</Button>
 				<StackPanel.Triggers>
 					<EventTrigger RoutedEvent="Button.Click" SourceName="AddServerButton">
 						<EventTrigger.Actions>
@@ -93,9 +93,9 @@
 				ToolTip="Click here to toggle project selection">Clear</Button>
 
 			<TextBox DockPanel.Dock="Top" x:Name="FilterBox" Padding="3" FontSize="12" Grid.Column="3"
-                     Margin="4,0,0,4"
-                     Text="{Binding SubscribeFilter, UpdateSourceTrigger=PropertyChanged}"
-                     cal:Message.Attach="[Event KeyUp]=[Action ClearFilter($executionContext)]">
+					 Margin="4,0,0,4"
+					 Text="{Binding SubscribeFilter, UpdateSourceTrigger=PropertyChanged}"
+					 cal:Message.Attach="[Event KeyUp]=[Action ClearFilter($executionContext)]">
 				<resources:WatermarkService.Watermark>
 					<TextBlock Margin="5,3,0,0">type here to filter jobs</TextBlock>
 				</resources:WatermarkService.Watermark>
@@ -135,7 +135,8 @@
 												ToolTip="{Binding Name, Mode=OneTime}"
 												Visibility="{Binding IsHidden, Converter={x:Static resources:Converters.ReverseBoolToVisibilityConverter}}">
 
-												<mui:ModernButton Visibility="{Binding IsSubscribed, Converter={x:Static resources:Converters.ReverseBoolToVisibilityConverter}}"
+												<mui:ModernButton 
+													Visibility="{Binding IsSubscribed, Converter={x:Static resources:Converters.ReverseBoolToVisibilityConverter}}"
 													cal:Message.Attach="Subscribe"
 													Content="{Binding Name, Mode=OneTime}"
 													HorizontalAlignment="Left">

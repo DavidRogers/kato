@@ -8,14 +8,14 @@ namespace JenkinsApiClient
 {
 	public sealed class JenkinsClient
 	{
-        public UserCredentials Credentials { get; set; }
+		public UserCredentials Credentials { get; set; }
 
-        public JenkinsClient(Uri baseUri, UserCredentials creds)
-        {
-            Credentials = creds;
+		public JenkinsClient(Uri baseUri, UserCredentials creds)
+		{
+			Credentials = creds;
 			m_baseUri = baseUri;
 
-        }
+		}
 
 		public Uri BaseUri
 		{
@@ -54,21 +54,21 @@ namespace JenkinsApiClient
 		{
 			Uri apiRoute = JenkinsApiHelper.GetApiRoute(uri);
 			string members = GetMembers<T>();
-			return HttpHelper.GetJsonAsync(new Uri(apiRoute.OriginalString + "?tree=" + members, UriKind.Absolute),Credentials);
+			return HttpHelper.GetJsonAsync(new Uri(apiRoute.OriginalString + "?tree=" + members, UriKind.Absolute), Credentials);
 		}
 
 		public Task<string> ForceBuild(Uri jobUri)
 		{
-			return HttpHelper.PostData(new Uri(jobUri, "build"),"",Credentials);
+			return HttpHelper.PostData(new Uri(jobUri, "build"), "", Credentials);
 		}
 
 		public Task<string> DisableJob(Uri jobUri)
 		{
-			return HttpHelper.PostData(new Uri(jobUri, "disable"),"",Credentials);
+			return HttpHelper.PostData(new Uri(jobUri, "disable"), "", Credentials);
 		}
 		public Task<string> EnableJob(Uri jobUri)
 		{
-			return HttpHelper.PostData(new Uri(jobUri, "enable"),"",Credentials);
+			return HttpHelper.PostData(new Uri(jobUri, "enable"), "", Credentials);
 		}
 
 		readonly Uri m_baseUri;
@@ -77,7 +77,7 @@ namespace JenkinsApiClient
 		{
 			Uri apiRoute = JenkinsApiHelper.GetApiRoute(uri);
 			string members = GetMembers<T>();
-			return HttpHelper.GetObject<T>(HttpHelper.GetJson(new Uri(apiRoute.OriginalString + "?tree=" + members, UriKind.Absolute),Credentials));
+			return HttpHelper.GetObject<T>(HttpHelper.GetJson(new Uri(apiRoute.OriginalString + "?tree=" + members, UriKind.Absolute), Credentials));
 		}
 	}
 }
