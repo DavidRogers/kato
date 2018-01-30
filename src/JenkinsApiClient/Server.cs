@@ -7,7 +7,8 @@
 		public string NodeName { get; set; }
 		public string NodeDescription { get; set; }
 		public string DomainUrl { get; set; }
-
+		public bool UseCrumbs { get; set; }
+		public bool UseSecurity { get; set; }
 		public bool RequiresAuthentication { get; set; }
 	}
 }

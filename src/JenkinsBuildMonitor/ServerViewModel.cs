@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 using Caliburn.Micro;
 using JenkinsApiClient;
-using Newtonsoft.Json;
 
 namespace Kato
 {
@@ -22,23 +23,31 @@ namespace Kato
 
 	public class ServerViewModel : PropertyChangedBase
 	{
-		public ServerViewModel(JenkinsClient client, Server server)
+		public ServerViewModel(JenkinsClient client)
 		{
 			m_jobs = new ObservableCollection<JobViewModel>();
-			m_server = server;
 			m_client = client;
-
-			Initialize();
 		}
 
-		public ObservableCollection<JobViewModel> Jobs { get { return m_jobs; } }
-		public string DomainUrl { get { return m_client.BaseUri.OriginalString; } }
-		public bool RequiresAuthentication { get { return m_server?.RequiresAuthentication ?? false; } }
+		public ObservableCollection<JobViewModel> Jobs => m_jobs;
+		public string DomainUrl => m_client.BaseUri.OriginalString;
+		public bool RequiresAuthentication => m_server?.RequiresAuthentication ?? false;
 		public string Description { get; private set; }
+
+		public bool Delete
+		{
+			get => m_delete;
+			private set
+			{
+				if (value.Equals(m_delete)) return;
+				m_delete = value;
+				NotifyOfPropertyChange(() => Delete);
+			}
+		}
 
 		public bool IsValid
 		{
-			get { return m_isValid; }
+			get => m_isValid;
 			private set
 			{
 				if (value.Equals(m_isValid)) return;
@@ -47,23 +56,82 @@ namespace Kato
 			}
 		}
 
-		public void Update()
+		public bool IsConnected
 		{
-			if (!IsValid)
-				return;
-
-			foreach (JobViewModel job in m_jobs.Where(x => x.IsSubscribed))
-				UpdateJob(job);
+			get => m_isConnected;
+			private set
+			{
+				if (value.Equals(m_isConnected)) return;
+				m_isConnected = value;
+				NotifyOfPropertyChange(() => IsConnected);
+			}
 		}
 
-		private void UpdateJob(JobViewModel job)
+		public async Task InitializeAsync()
+		{
+			m_server = await m_client.GetJsonAsync<Server>(m_client.BaseUri);
+			if (m_server == null)
+			{
+				IsConnected = false;
+				return;
+			}
+
+			Description = m_server.NodeDescription;
+			IsConnected = true;
+			IsValid = true;
+
+			foreach (var job in m_server.Jobs)
+				m_jobs.Add(new JobViewModel(job.Name, job.Url, m_client) { Color = job.Color });
+		}
+
+		public async Task<bool> VerifyConnectionAsync()
+		{
+			bool wasConnected = IsConnected;
+			IsConnected = await m_client.VerifyConnectionAsync().LogErrors();
+
+			if (!wasConnected && IsConnected)
+				await InitializeAsync();
+
+			return IsConnected;
+		}
+
+		public async Task Update()
+		{
+			if (!IsValid || !IsConnected)
+				return;
+
+			await Task.WhenAll(m_jobs.Where(x => x.IsSubscribed).Select(UpdateJob)).ConfigureAwait(true);
+		}
+
+		public void Remove()
+		{
+			IsValid = false;
+			m_jobs.Clear();
+			Delete = true;
+		}
+
+		public void UpdateCredentials()
+		{
+			var userCredentials = CredentialsHelper.PromptForCredentials(DomainUrl, true);
+			if (userCredentials != null)
+			{
+				CredentialCache.Invalidate(DomainUrl.TrimEnd('/') + "/");
+				m_client.Credentials = userCredentials;
+			}
+			else
+			{
+				MessageBox.Show("Username and password are not valid.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
+		}
+
+		private async Task UpdateJob(JobViewModel job)
 		{
 			if (!IsValid)
 				return;
 
 			try
 			{
-				Job source = JsonConvert.DeserializeObject<Job>(m_client.GetJsonAsync<Job>(job.Path).LogErrors().Result);
+				Job source = await m_client.GetJsonAsync<Job>(job.Path);
 
 				if (source == null)
 					return;
@@ -74,8 +142,9 @@ namespace Kato
 
 				UpdateLastBuild(job, source.LastBuild);
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
+				s_logger.Error(e);
 			}
 		}
 
@@ -102,23 +171,13 @@ namespace Kato
 			return s_epoch + TimeSpan.FromMilliseconds(timeStamp);
 		}
 
-		private void Initialize()
-		{
-			IsValid = false;
-			if (m_server == null)
-				return;
-
-			Description = m_server.NodeDescription;
-			IsValid = true;
-
-			foreach (var job in m_server.Jobs)
-				m_jobs.Add(new JobViewModel(job.Name, job.Url, m_client) { Color = job.Color });
-		}
-
+		static readonly log4net.ILog s_logger = log4net.LogManager.GetLogger("ServerViewModel");
 		static readonly DateTime s_epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 		readonly ObservableCollection<JobViewModel> m_jobs;
-		private readonly Server m_server;
+		private Server m_server;
 		readonly JenkinsClient m_client;
 		bool m_isValid;
+		bool m_delete;
+		bool m_isConnected;
 	}
 }

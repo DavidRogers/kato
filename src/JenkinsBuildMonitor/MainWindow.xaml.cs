@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Threading;
 using FirstFloor.ModernUI.Presentation;
 using Hardcodet.Wpf.TaskbarNotification;
 
@@ -52,13 +53,18 @@ namespace Kato
 			ContentSource = new Uri("Pages/" + page + ".xaml", UriKind.Relative);
 		}
 
-		private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
+		private async void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
 		{
 			Loaded -= OnLoaded;
 
+			await Model.Initialize().ConfigureAwait(true);
+
 			// load settings page to subscribe to jobs if there are none selected
-			if (Model.Servers != null && !Model.Servers.SelectMany(x => x.Jobs).Any(x => x.IsSubscribed))
-				ContentSource = new Uri("Pages/Subscribe.xaml", UriKind.Relative);
+			await Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+			{
+				if (Model.Servers != null && !Model.Servers.SelectMany(x => x.Jobs).Any(x => x.IsSubscribed))
+					ContentSource = new Uri("Pages/Subscribe.xaml", UriKind.Relative);
+			}));
 		}
 
 		protected override void OnStateChanged(EventArgs e)

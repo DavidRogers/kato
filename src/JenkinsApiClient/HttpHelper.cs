@@ -9,44 +9,16 @@ namespace JenkinsApiClient
 {
 	public static class HttpHelper
 	{
-
-		#region Credentials local in memory cache
-
-		private static Dictionary<string, UserCredentials> _cachedCredentials = new Dictionary<string, UserCredentials>();
-
-		private static UserCredentials CachedCreds_TryGet(string baseAddress)
-		{
-			if (String.IsNullOrWhiteSpace(baseAddress))
-				return null;
-
-			var lowerAddress = baseAddress.ToLower();
-			return _cachedCredentials.ContainsKey(lowerAddress) ? _cachedCredentials[lowerAddress] : null;
-		}
-
-		private static void CachedCreds_Set(string baseAddress, UserCredentials creds)
-		{
-			if (String.IsNullOrWhiteSpace(baseAddress) || creds == null || !creds.IsValid)
-				return;
-
-			var lowerAddress = baseAddress.ToLower();
-			if (_cachedCredentials.ContainsKey(lowerAddress))
-				return;
-
-			_cachedCredentials.Add(lowerAddress, creds);
-
-		}
-
 		private static UserCredentials EnsureCredentials(string baseAddress, UserCredentials credentials)
 		{
 			if (credentials != null)
-				CachedCreds_Set(baseAddress, credentials);
+				CredentialCache.SetCachedCredentials(baseAddress, credentials);
 
-			return credentials ?? CachedCreds_TryGet(baseAddress);
+			return credentials ?? CredentialCache.TryGetCachedCredentials(baseAddress);
 		}
-		#endregion
 
 
-		public static Task<string> GetJsonAsync(Uri path, UserCredentials credential = null)
+		public static async Task<string> GetJsonAsync(Uri path, UserCredentials credential = null)
 		{
 			using (HttpClient client = new HttpClient { BaseAddress = new Uri(path.Scheme + "://" + path.Host + ":" + path.Port) })
 			{
@@ -54,9 +26,9 @@ namespace JenkinsApiClient
 				var cred = EnsureCredentials(client.BaseAddress.ToString(), credential);
 				client.ApplyCredentials(cred);
 
-				HttpResponseMessage result = client.GetAsync(path.PathAndQuery).Result;
+				HttpResponseMessage result = await client.GetAsync(path.PathAndQuery);
 				result.EnsureSuccessStatusCode();
-				return result.Content.ReadAsStringAsync();
+				return await result.Content.ReadAsStringAsync();
 			}
 		}
 
@@ -91,15 +63,24 @@ namespace JenkinsApiClient
 			}
 		}
 
-		public static Task<string> PostData(Uri path, string data = "", UserCredentials credential = null)
+		public static async Task<string> PostDataAsync(Uri path, string data = "", UserCredentials credential = null)
 		{
 			using (HttpClient client = new HttpClient { BaseAddress = new Uri(path.Scheme + "://" + path.Host + ":" + path.Port) })
 			{
 				var cred = EnsureCredentials(client.BaseAddress.ToString(), credential);
 				client.ApplyCredentials(cred);
-				HttpResponseMessage result = client.PostAsync(path.PathAndQuery, new StringContent(data)).Result;
-				result.EnsureSuccessStatusCode();
-				return result.Content.ReadAsStringAsync();
+
+				var content = new StringContent(data);
+
+				var crumbResponse = await client.GetAsync("/crumbIssuer/api/json");
+				if (crumbResponse.IsSuccessStatusCode)
+				{
+					CrumbToken token = GetObject<CrumbToken>(await crumbResponse.Content.ReadAsStringAsync());
+					content.Headers.Add(token.CrumbRequestField, token.Crumb);
+				}
+
+				HttpResponseMessage result = await client.PostAsync(path.PathAndQuery, content);
+				return result.IsSuccessStatusCode ? await result.Content.ReadAsStringAsync() : null;
 			}
 		}
 
@@ -109,6 +90,12 @@ namespace JenkinsApiClient
 				return null;
 
 			return JsonConvert.DeserializeObject<T>(json);
+		}
+
+		private class CrumbToken
+		{
+			public string Crumb { get; set; }
+			public string CrumbRequestField { get; set; }
 		}
 	}
 }

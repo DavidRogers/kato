@@ -19,11 +19,9 @@ using System.Windows.Shell;
 using System.Windows.Threading;
 using System.Xml.Linq;
 using Caliburn.Micro;
-using CredentialManagement;
 using Hardcodet.Wpf.TaskbarNotification;
 using JenkinsApiClient;
 using Kato.Properties;
-using SecureCredentialsLibrary;
 using Action = System.Action;
 
 namespace Kato
@@ -40,7 +38,7 @@ namespace Kato
 			m_servers = new ObservableCollection<ServerViewModel>();
 			m_settings = PersistedUserSettings.Open<UserSettings>() ?? new UserSettings { Servers = new List<SavedJenkinsServers>() };
 			m_updateTimerInterval = Settings.Default.JobUpdateInterval < c_minJobUpdateInterval ? c_projectUpdateInterval : Settings.Default.JobUpdateInterval;
-			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(m_updateTimerInterval), DispatcherPriority.Background, (sender, args) => Update(), Dispatcher.CurrentDispatcher);
+			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(m_updateTimerInterval), DispatcherPriority.Background, async (sender, args) => await Update(), Dispatcher.CurrentDispatcher);
 			Status = new StatusViewModel();
 			m_subscribedJobs = new ObservableCollection<JobViewModel>();
 
@@ -50,14 +48,13 @@ namespace Kato
 				m_updateManager.PropertyChanged += UpdateManager_PropertyChanged;
 				m_updateTimer = new DispatcherTimer(TimeSpan.FromHours(4), DispatcherPriority.Background, CheckForUpdate, Dispatcher.CurrentDispatcher);
 			}
-			Initialize();
 		}
 
-		public ObservableCollection<ServerViewModel> Servers { get { return m_servers; } }
+		public ObservableCollection<ServerViewModel> Servers => m_servers;
 
 		public ObservableCollection<JobViewModel> SubscribedJobs
 		{
-			get { return m_subscribedJobs; }
+			get => m_subscribedJobs;
 			set
 			{
 				if (Equals(value, m_subscribedJobs)) return;
@@ -66,27 +63,22 @@ namespace Kato
 			}
 		}
 
-		public StatusViewModel Status { get; private set; }
+		public StatusViewModel Status { get; }
 
 		public bool HasInternetConnection
 		{
-			get { return m_hasInternetConnection; }
+			get => m_hasInternetConnection;
 			set
 			{
 				if (Equals(value, m_hasInternetConnection)) return;
 				m_hasInternetConnection = value;
-				if (value)
-				{
-					m_servers.Clear();
-					Initialize();
-				}
 				NotifyOfPropertyChange(() => HasInternetConnection);
 			}
 		}
 
 		public string NewServerUrl
 		{
-			get { return m_newServerUrl; }
+			get => m_newServerUrl;
 			set
 			{
 				if (value == m_newServerUrl) return;
@@ -101,7 +93,7 @@ namespace Kato
 
 		public bool NewServerAuthRequired
 		{
-			get { return m_newServerAuthRequired; }
+			get => m_newServerAuthRequired;
 			set
 			{
 				if (value == m_newServerAuthRequired) return;
@@ -113,7 +105,7 @@ namespace Kato
 
 		public ViewModeKind ViewMode
 		{
-			get { return m_viewMode; }
+			get => m_viewMode;
 			set
 			{
 				if (value == m_viewMode) return;
@@ -124,7 +116,7 @@ namespace Kato
 
 		public string SubscribeFilter
 		{
-			get { return m_subscribeFilter; }
+			get => m_subscribeFilter;
 			set
 			{
 				if (value == m_subscribeFilter) return;
@@ -136,7 +128,7 @@ namespace Kato
 
 		public bool IsUpdateAvailable
 		{
-			get { return m_isUpdateAvailable; }
+			get => m_isUpdateAvailable;
 			set
 			{
 				if (value.Equals(m_isUpdateAvailable)) return;
@@ -147,10 +139,7 @@ namespace Kato
 
 		public bool IsUpdatingJobs
 		{
-			get
-			{
-				return m_isUpdatingJobs;
-			}
+			get => m_isUpdatingJobs;
 			set
 			{
 				if (value.Equals(m_isUpdatingJobs)) return;
@@ -159,10 +148,9 @@ namespace Kato
 			}
 		}
 
-
 		public double UpdateTimerInterval
 		{
-			get { return m_updateTimerInterval; }
+			get => m_updateTimerInterval;
 			set
 			{
 				if (value.Equals(m_updateTimerInterval)) return;
@@ -175,7 +163,7 @@ namespace Kato
 
 		public JobViewModel SelectedProject
 		{
-			get { return m_selectedProject; }
+			get => m_selectedProject;
 			set
 			{
 				if (Equals(value, m_selectedProject)) return;
@@ -186,13 +174,31 @@ namespace Kato
 
 		public bool IsAddServerUrlValid
 		{
-			get { return m_isAddServerUrlValid; }
+			get => m_isAddServerUrlValid;
 			set
 			{
 				if (value.Equals(m_isAddServerUrlValid)) return;
 				m_isAddServerUrlValid = value;
 				NotifyOfPropertyChange(() => IsAddServerUrlValid);
 			}
+		}
+
+		public async Task Initialize()
+		{
+			AutoDetectServers();
+
+			if (m_settings?.Servers == null || m_settings.Servers.Count == 0)
+			{
+				if (Settings.Default.Servers != null && Settings.Default.Servers.Count > 0)
+					await AddServers(Settings.Default.Servers).ConfigureAwait(true);
+			}
+			else
+			{
+				foreach (var server in m_settings.Servers)
+					await AddServer(server.DomainUrl, false).ConfigureAwait(true);
+			}
+
+			await Update().ConfigureAwait(true);
 		}
 
 		public void ClearFilter(ActionExecutionContext context)
@@ -202,11 +208,11 @@ namespace Kato
 				SubscribeFilter = "";
 		}
 
-		public void AddServerEnter(ActionExecutionContext context)
+		public async Task AddServerEnter(ActionExecutionContext context)
 		{
 			var eventArgs = (KeyEventArgs) context.EventArgs;
 			if (eventArgs.Key == Key.Enter)
-				AddServer();
+				await AddServer();
 		}
 
 		public void ToggleViewMode(string mode)
@@ -218,17 +224,22 @@ namespace Kato
 
 		public void SaveSettings()
 		{
-			if (m_servers.Any(x => !x.IsValid) || !HasInternetConnection)
-				return;
-
-			UserSettings settings = new UserSettings { Servers = new List<SavedJenkinsServers>() };
 			foreach (ServerViewModel server in Servers)
 			{
-				List<SavedJob> jobs = server.Jobs.Where(x => x.IsSubscribed).Select(x => new SavedJob { Name = x.Name }).ToList();
-				settings.Servers.Add(new SavedJenkinsServers { DomainUrl = server.DomainUrl, Jobs = jobs, RequiresAuthentication = server.RequiresAuthentication });
+				if (server.IsConnected && server.IsValid)
+				{
+					List<SavedJob> jobs = server.Jobs.Where(x => x.IsSubscribed).Select(x => new SavedJob { Name = x.Name }).ToList();
+					m_settings.Servers.RemoveAll(x => x.DomainUrl == server.DomainUrl);
+					m_settings.Servers.Add(new SavedJenkinsServers
+					{
+						DomainUrl = server.DomainUrl,
+						Jobs = jobs,
+						RequiresAuthentication = server.RequiresAuthentication
+					});
+				}
 			}
 
-			PersistedUserSettings.Save(settings);
+			PersistedUserSettings.Save(m_settings);
 			Settings.Default.ViewMode = ViewMode.ToString();
 			Settings.Default.JobUpdateInterval = UpdateTimerInterval;
 			Settings.Default.Servers = new StringCollection();
@@ -236,7 +247,7 @@ namespace Kato
 			Settings.Default.Save();
 		}
 
-		public void AddServer()
+		public async Task AddServer()
 		{
 			if (string.IsNullOrWhiteSpace(NewServerUrl))
 				return;
@@ -247,7 +258,7 @@ namespace Kato
 				return;
 			}
 
-			if (AddServer(NewServerUrl, NewServerAuthRequired))
+			if (await AddServer(NewServerUrl, NewServerAuthRequired).ConfigureAwait(true))
 			{
 				IsAddServerUrlValid = true;
 				NewServerUrl = "";
@@ -264,7 +275,7 @@ namespace Kato
 			SetJobSubscriptions("a");
 		}
 
-		public async void CheckForInternetConnection()
+		public async Task CheckForInternetConnection()
 		{
 			await CheckForInternetConnectionAsync().ConfigureAwait(true);
 		}
@@ -273,11 +284,10 @@ namespace Kato
 		{
 			try
 			{
-				var server = m_servers.FirstOrDefault();
-				if (server != null)
+				if (m_servers.Any())
 				{
-					using (await m_webClient.GetAsync(server.DomainUrl, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(true))
-						HasInternetConnection = true;
+					await Task.WhenAll(m_servers.Select(x => x.VerifyConnectionAsync())).ConfigureAwait(true);
+					HasInternetConnection = m_servers.Any(x => x.IsConnected);
 				}
 			}
 			catch
@@ -299,7 +309,6 @@ namespace Kato
 				return;
 
 			var jobs = m_servers.Where(s => s.Jobs != null).SelectMany(s => s.Jobs);
-
 			foreach (var j in jobs)
 			{
 				switch (mode)
@@ -313,7 +322,6 @@ namespace Kato
 				default:
 					break;
 				}
-
 			}
 
 			SaveSettings();
@@ -340,19 +348,25 @@ namespace Kato
 				job.IsHidden = !string.IsNullOrWhiteSpace(m_subscribeFilter) && !job.Name.ToLower().Contains(m_subscribeFilter.ToLower());
 		}
 
-		private async void Update()
+		private async Task Update()
 		{
 			if (!await CheckForInternetConnectionAsync().ConfigureAwait(true))
 				return;
+
+			foreach (var server in m_servers.Where(x => x.Delete).ToList())
+			{
+				m_servers.Remove(server);
+				SaveSettings();
+			}
 
 			if (!m_servers.Any())
 				return;
 
 			IsUpdatingJobs = true;
 
-			await Task.WhenAll(m_servers.Select(x => Task.Run(new Action(x.Update))).ToArray()).ConfigureAwait(true);
+			await Task.WhenAll(m_servers.Where(x => x.IsConnected).Select(x => x.Update())).ConfigureAwait(true);
 
-			var subscribedJobs = m_servers.SelectMany(x => x.Jobs.Where(j => j.IsSubscribed)).ToList();
+			var subscribedJobs = m_servers.Where(x => x.IsConnected).SelectMany(x => x.Jobs.Where(j => j.IsSubscribed)).ToList();
 			BuildStatus status = subscribedJobs.Any() ? subscribedJobs.Where(x => x.Status > BuildStatus.Aborted).Min(x => x.Status) : BuildStatus.Unknown;
 
 			if (m_overallStatus != status)
@@ -399,26 +413,6 @@ namespace Kato
 			return name;
 		}
 
-		private void Initialize()
-		{
-			AutoDetectServers();
-
-			if (m_settings == null || m_settings.Servers == null || m_settings.Servers.Count == 0)
-			{
-				if (Settings.Default.Servers != null && Settings.Default.Servers.Count > 0)
-					AddServers(Settings.Default.Servers);
-				else
-					AddServers(new[] { "https://jenkins" });
-			}
-			else
-			{
-				foreach (var server in m_settings.Servers)
-					AddServer(server.DomainUrl, server.RequiresAuthentication);
-			}
-
-			Update();
-		}
-
 		private void AutoDetectServers()
 		{
 			// 33848
@@ -443,7 +437,7 @@ namespace Kato
 		{
 			var xml = XElement.Parse((string) e.UserState);
 			var urlElement = xml.Elements("url").FirstOrDefault();
-			AddServers(new[] { (string) urlElement });
+			AddServers(new[] { (string) urlElement }).GetAwaiter().GetResult();
 		}
 
 		private void Worker_DoWork(object sender, DoWorkEventArgs e)
@@ -478,18 +472,19 @@ namespace Kato
 			{
 				client.AllowNatTraversal(true);
 				client.JoinMulticastGroup(address);
-				await client.SendAsync(message, message.Length, new IPEndPoint(address, 33848)).ConfigureAwait(false);
+				await client.SendAsync(message, message.Length, new IPEndPoint(address, 33848)).ConfigureAwait(true);
 				client.Close();
 			}
 		}
 
-		private void AddServers(IEnumerable servers)
+		private async Task AddServers(IEnumerable servers, bool authRequired = false)
 		{
-			foreach (string serverUri in servers.Cast<string>().Where(x => !string.IsNullOrWhiteSpace(x) && Uri.IsWellFormedUriString(x, UriKind.Absolute) && !m_servers.Any(y => y.DomainUrl == x)))
-				AddServer(serverUri);
+			var serverUris = servers.Cast<string>().Where(x => !string.IsNullOrWhiteSpace(x) && Uri.IsWellFormedUriString(x, UriKind.Absolute) && !m_servers.Any(y => y.DomainUrl == x));
+
+			await Task.WhenAll(serverUris.Select(x => AddServer(x, authRequired))).ConfigureAwait(true);
 		}
 
-		private bool AddServer(string serverUri, bool authRequired = false)
+		private async Task<bool> AddServer(string serverUri, bool authRequired = false)
 		{
 			if (m_servers.Any(x => x.DomainUrl == serverUri))
 				return false;
@@ -497,7 +492,7 @@ namespace Kato
 			UserCredentials userCreds = null;
 			if (authRequired)
 			{
-				userCreds = PromptForCredentials(serverUri);
+				userCreds = CredentialsHelper.PromptForCredentials(serverUri);
 				if (userCreds == null)
 				{
 					MessageBox.Show("Please provide your username and password", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -505,18 +500,15 @@ namespace Kato
 				}
 			}
 
-			ServerViewModel serverViewModel;
-			JenkinsClient client = new JenkinsClient(new Uri(serverUri, UriKind.Absolute), userCreds);
+			var client = new JenkinsClient(new Uri(serverUri, UriKind.Absolute), userCreds);
+			var serverViewModel = new ServerViewModel(client);
 			try
 			{
-				Server server = client.GetJson<Server>(new Uri(serverUri));
-				server.RequiresAuthentication = authRequired;
-
-				serverViewModel = new ServerViewModel(client, server);
+				await serverViewModel.InitializeAsync().ConfigureAwait(true);
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
-				serverViewModel = new ServerViewModel(client, null);
+				s_logger.Warn("Cound not connect to server: " + serverUri, e);
 			}
 
 			SavedJenkinsServers savedServer = m_settings.Servers.FirstOrDefault(x => x.DomainUrl == serverViewModel.DomainUrl);
@@ -529,6 +521,7 @@ namespace Kato
 			}
 
 			m_servers.Add(serverViewModel);
+
 			return true;
 		}
 
@@ -608,52 +601,12 @@ namespace Kato
 			m_updateManager.CheckForUpdate();
 		}
 
-		private UserCredentials PromptForCredentials(string url)
-		{
-			UserCredentials result = null;
-			CredentialsDialog dialog = new CredentialsDialog("Kato - Jenkins Authentication : \r\n" + url);
-
-			if (dialog.Show() == DialogResult.OK && (!String.IsNullOrWhiteSpace(dialog.Password) && !String.IsNullOrWhiteSpace(dialog.Name)))
-			{
-				var creds = new UserCredentials { UserName = dialog.Name, Password = dialog.Password };
-
-				if (!TryToAuthenticate(url, creds))
-					return null;
-
-				if (dialog.SaveChecked)
-				{
-					dialog.Confirm(true);
-				}
-				result = creds;
-			}
-
-			return result;
-		}
-
-		private bool TryToAuthenticate(string serverUrl, UserCredentials creds)
-		{
-			if (!creds.IsValid)
-				return false;
-
-			try
-			{
-				var apiUri = JenkinsApiHelper.GetApiRoute(new Uri(serverUrl, UriKind.Absolute));
-				var response = HttpHelper.GetJson(apiUri, creds);
-				return true;
-			}
-			catch (Exception e)
-			{
-				s_logger.Error(e.Message, e);
-				return false;
-			}
-		}
-
+		static readonly log4net.ILog s_logger = log4net.LogManager.GetLogger("AppModel");
 		const double c_projectUpdateInterval = 15;
 		const int c_minJobUpdateInterval = 3;
 		readonly HttpClient m_webClient = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
 		DispatcherTimer m_updateTimer;
 		bool m_hasInternetConnection;
-		static readonly log4net.ILog s_logger = log4net.LogManager.GetLogger("AppModel");
 		readonly ObservableCollection<ServerViewModel> m_servers;
 		readonly UserSettings m_settings;
 		readonly DispatcherTimer m_timer;

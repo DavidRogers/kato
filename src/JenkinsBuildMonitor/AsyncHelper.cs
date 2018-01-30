@@ -10,7 +10,7 @@ namespace Kato
 			{
 				if (x.IsFaulted || x.IsCanceled)
 				{
-					s_logger.Error("Asyc call failed", x.Exception);
+					s_logger.Error("Async call failed", x.Exception);
 					return default(T);
 				}
 

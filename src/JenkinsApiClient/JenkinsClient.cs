@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -50,25 +51,25 @@ namespace JenkinsApiClient
 			return source.Substring(0, 1).ToLower() + source.Substring(1, source.Length - 1);
 		}
 
-		public Task<string> GetJsonAsync<T>(Uri uri)
+		public async Task<T> GetJsonAsync<T>(Uri uri)
 		{
 			Uri apiRoute = JenkinsApiHelper.GetApiRoute(uri);
 			string members = GetMembers<T>();
-			return HttpHelper.GetJsonAsync(new Uri(apiRoute.OriginalString + "?tree=" + members, UriKind.Absolute), Credentials);
+			return GetData<T>(await HttpHelper.GetJsonAsync(new Uri(apiRoute.OriginalString + "?tree=" + members, UriKind.Absolute), Credentials));
 		}
 
 		public Task<string> ForceBuild(Uri jobUri)
 		{
-			return HttpHelper.PostData(new Uri(jobUri, "build"), "", Credentials);
+			return HttpHelper.PostDataAsync(new Uri(jobUri, "build"), "", Credentials);
 		}
 
 		public Task<string> DisableJob(Uri jobUri)
 		{
-			return HttpHelper.PostData(new Uri(jobUri, "disable"), "", Credentials);
+			return HttpHelper.PostDataAsync(new Uri(jobUri, "disable"), "", Credentials);
 		}
 		public Task<string> EnableJob(Uri jobUri)
 		{
-			return HttpHelper.PostData(new Uri(jobUri, "enable"), "", Credentials);
+			return HttpHelper.PostDataAsync(new Uri(jobUri, "enable"), "", Credentials);
 		}
 
 		readonly Uri m_baseUri;
@@ -78,6 +79,15 @@ namespace JenkinsApiClient
 			Uri apiRoute = JenkinsApiHelper.GetApiRoute(uri);
 			string members = GetMembers<T>();
 			return HttpHelper.GetObject<T>(HttpHelper.GetJson(new Uri(apiRoute.OriginalString + "?tree=" + members, UriKind.Absolute), Credentials));
+		}
+
+		public async Task<bool> VerifyConnectionAsync()
+		{
+			using (HttpClient client = new HttpClient { BaseAddress = m_baseUri, Timeout = TimeSpan.FromSeconds(5) })
+			{
+				var response = await client.GetAsync("api/json?tree=nodeName", HttpCompletionOption.ResponseHeadersRead);
+				return response.IsSuccessStatusCode;
+			}
 		}
 	}
 }

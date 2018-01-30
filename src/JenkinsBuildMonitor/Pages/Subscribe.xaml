@@ -3,6 +3,7 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:mui="http://firstfloorsoftware.com/ModernUI"
 	xmlns:cal="http://www.caliburnproject.org"
+	xmlns:fa="http://schemas.fontawesome.io/icons/"
 	xmlns:resources="clr-namespace:Kato.Resources"
 	xmlns:src="clr-namespace:Kato"
 	MinHeight="400"
@@ -114,12 +115,23 @@
 				<ItemsControl.ItemTemplate>
 					<DataTemplate DataType="{x:Type src:ServerViewModel}">
 						<DockPanel>
-							<TextBlock DockPanel.Dock="Top">
-								<Run FontWeight="Bold" Text="{Binding DomainUrl, Mode=OneTime}" />
-								<Run>:</Run>
-								<Run Text="{Binding Description, Mode=OneTime}" />
-							</TextBlock>
-							<ItemsControl ItemsSource="{Binding Jobs, Mode=OneTime}" HorizontalContentAlignment="Stretch">
+							<DockPanel DockPanel.Dock="Top"
+									Visibility="{Binding Delete, Converter={x:Static resources:Converters.ReverseBoolToVisibilityConverter}}">
+								<StackPanel Orientation="Horizontal"  DockPanel.Dock="Right">
+									<Button cal:Message.Attach="UpdateCredentials" ToolTip="Update Credentials">
+										<fa:FontAwesome Icon="Key"></fa:FontAwesome>
+									</Button>
+									<Button cal:Message.Attach="Remove" ToolTip="Remove Server">
+										<fa:FontAwesome Icon="Remove"></fa:FontAwesome>
+									</Button>
+								</StackPanel>
+								<TextBlock DockPanel.Dock="Left">
+									<Run FontWeight="Bold" Text="{Binding DomainUrl, Mode=OneTime}" />
+									<Run>:</Run>
+									<Run Text="{Binding Description, Mode=OneTime}" />
+								</TextBlock>
+							</DockPanel>
+							<ItemsControl DockPanel.Dock="Bottom" ItemsSource="{Binding Jobs, Mode=OneTime}" HorizontalContentAlignment="Stretch">
 								<ItemsControl.ItemTemplate>
 									<DataTemplate DataType="{x:Type src:JobViewModel}">
 										<DockPanel>
