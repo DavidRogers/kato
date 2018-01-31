@@ -217,8 +217,7 @@ namespace Kato
 
 		public void ToggleViewMode(string mode)
 		{
-			ViewModeKind kind;
-			if (Enum.TryParse(mode, true, out kind))
+			if (Enum.TryParse(mode, true, out ViewModeKind kind))
 				ViewMode = kind;
 		}
 

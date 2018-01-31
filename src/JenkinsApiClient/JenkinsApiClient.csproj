@@ -68,7 +68,6 @@
     <Compile Include="UserCredentials.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="JenkinsApiClient.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
