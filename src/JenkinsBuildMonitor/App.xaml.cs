@@ -48,8 +48,7 @@ namespace Kato
 
 		public bool SignalExternalCommandLineArgs(IList<string> args)
 		{
-			if (MainWindow != null)
-				MainWindow.Activate();
+			MainWindow?.Activate();
 
 			return true;
 		}

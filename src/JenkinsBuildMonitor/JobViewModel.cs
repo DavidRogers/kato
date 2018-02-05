@@ -126,6 +126,19 @@ namespace Kato
 			}
 		}
 
+		public bool IsConnected
+		{
+			get { return m_isConnected; }
+			set
+			{
+				if (m_isConnected != value)
+				{
+					m_isConnected = value;
+					NotifyOfPropertyChange(() => IsConnected);
+				}
+			}
+		}
+
 		public bool IsHidden
 		{
 			get { return m_isHidden; }
@@ -254,6 +267,7 @@ namespace Kato
 		BuildViewModel m_lastBuild;
 		HealthReport[] m_healthReports;
 		ConsoleOutputControl m_consoleOuputDocument;
+		bool m_isConnected;
 	}
 
 	public delegate void StatusChangedEvent(object sender, StatusChangedArgs args);

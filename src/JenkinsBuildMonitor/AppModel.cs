@@ -289,8 +289,9 @@ namespace Kato
 					HasInternetConnection = m_servers.Any(x => x.IsConnected);
 				}
 			}
-			catch
+			catch (Exception e)
 			{
+				s_logger.Error(e);
 				HasInternetConnection = false;
 			}
 

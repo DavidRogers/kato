@@ -40,7 +40,7 @@
 				</TextBlock>
 			</StackPanel>
 		</Grid>
-		<Label Visibility="{Binding HasInternetConnection, Converter={x:Static src:Converters.ReverseBoolToVisibilityConverter}}" Padding="4" Background="LightYellow" DockPanel.Dock="Bottom">Unable to connect to server.</Label>
+		<Label Visibility="{Binding HasInternetConnection, Converter={x:Static src:Converters.ReverseBoolToVisibilityConverter}}" Padding="4" Background="LightYellow" DockPanel.Dock="Bottom">Unable to connect to server(s).</Label>
         <Label Visibility="{Binding IsUpdateAvailable, Converter={x:Static src:Converters.BoolToVisibilityConverter}}" Padding="4" Background="LightBlue" DockPanel.Dock="Bottom">An update has been installed, please restart to see the latest changes.</Label>
         <Grid DockPanel.Dock="Bottom">
 			<ScrollViewer VerticalScrollBarVisibility="Auto">

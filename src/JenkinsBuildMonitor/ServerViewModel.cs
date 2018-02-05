@@ -87,7 +87,7 @@ namespace Kato
 		public async Task<bool> VerifyConnectionAsync()
 		{
 			bool wasConnected = IsConnected;
-			IsConnected = await m_client.VerifyConnectionAsync().LogErrors();
+			IsConnected = await m_client.VerifyConnectionAsync().ConfigureAwait(true);
 
 			if (!wasConnected && IsConnected)
 				await InitializeAsync();
