@@ -5,7 +5,7 @@ Kato is a Jenkins build monitor for Windows. It allows you to keep track of the 
 Kato is elegant and easy to use. Just type in the URL of a Jenkins master node and select the projects that you would like to track.
 
 ## Installation
-You can download and install Kato at http://fieryjoy.com/kato
+You can download and run the code yourself until I can find a place to host the setup script.
 
 ## Settings
 ![alt tag](https://raw.githubusercontent.com/aliozgur/kato/master/media/Settings_02.png)
